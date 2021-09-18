@@ -25,7 +25,7 @@ const (
 var (
 	mSprite map[string]*ebiten.Image
 
-	//go:embed assets/*
+	//go:embed assets/*.png
 	f embed.FS
 )
 
