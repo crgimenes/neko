@@ -1,0 +1,23 @@
+; This file is maintained by HCW. Do not modify this file directly.
+
+; This file is maintained by WHD. Copyright (c) Nick Ameladiotis
+[OPTIONS]
+COMPRESS=12 Hall Zeck
+ERRORLOG=Neko98.LOG
+LCID=0x809 0x0 0x0 ; English (United Kingdom)
+REPORT=Yes
+CONTENTS=Neko98
+TITLE=Neko98
+CNT=Neko98.CNT
+COPYRIGHT=© 1998 DHSoft
+PREFIX=HIDC_
+HLP=Neko98.hlp
+
+[FILES]
+Neko98.RTF
+
+[MAP]
+#include ..\NekoCFG\NekoCFG_resource.hm
+
+[WINDOWS]
+main="Neko98",(640,109,384,682),27648,(r14811135),(r12632256),1

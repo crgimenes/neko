@@ -1,0 +1,126 @@
+//{{NO_DEPENDENCIES}}
+// Microsoft Developer Studio generated include file.
+// Used by NekoCFG.rc
+//
+#define IDS_DESC1                       1
+#define IDS_DESC2                       2
+#define IDS_DESC3                       3
+#define IDS_DESC4                       4
+#define IDS_DESC5                       5
+#define IDS_DESC6                       6
+#define IDI_APPICON                     101
+#define ID_SETTINGS                     101
+#define IDC_SPEEDSLIDER                 102
+#define ID_EXIT                         102
+#define IDC_SENSESLIDER                 103
+#define ID_NEKOUPDATETIMER              103
+#define IDC_IMAGELIB                    104
+#define IDC_PREVIEW                     105
+#define IDC_TASKBAR                     106
+#define IDC_CHANGE                      107
+#define IDC_DEFAULT                     108
+#define IDD_GENERAL                     109
+#define IDD_MOVEMENT                    109
+#define IDD_INDEPENDENCE                110
+#define IDD_DISPLAY                     112
+#define IDI_AWAKE                       113
+#define IDI_UP1                         114
+#define IDI_UP2                         115
+#define IDI_UPRIGHT1                    116
+#define IDI_UPRIGHT2                    117
+#define IDI_RIGHT1                      118
+#define IDI_RIGHT2                      119
+#define IDI_DOWNRIGHT1                  120
+#define IDI_DOWNRIGHT2                  121
+#define IDI_DOWN1                       122
+#define IDI_DOWN2                       123
+#define IDI_DOWNLEFT1                   124
+#define IDI_DOWNLEFT2                   125
+#define IDI_LEFT1                       126
+#define IDI_LEFT2                       127
+#define IDI_UPLEFT1                     128
+#define IDI_UPLEFT2                     129
+#define IDI_UPCLAW1                     130
+#define IDI_UPCLAW2                     131
+#define IDI_RIGHTCLAW1                  132
+#define IDI_RIGHTCLAW2                  133
+#define IDI_LEFTCLAW1                   134
+#define IDI_LEFTCLAW2                   135
+#define IDI_DOWNCLAW1                   136
+#define IDI_DOWNCLAW2                   137
+#define IDI_WASH2                       138
+#define IDI_SCRATCH1                    139
+#define IDI_SCRATCH2                    140
+#define IDI_YAWN2                       141
+#define IDI_YAWN3                       142
+#define IDI_SLEEP1                      143
+#define IDI_SLEEP2                      144
+#define IDI_TASKBAR                     145
+#define IDI_DEFAULT                     146
+#define IDI_DISPLAYICON                 147
+#define IDI_MOVEMENTICON                148
+#define IDI_ABOUTICON                   149
+#define IDD_ABOUT                       150
+#define IDI_SOUNDSICON                  151
+#define IDD_SOUNDS                      152
+#define IDB_TASKBAR                     155
+#define IDB_CATCLOCK                    156
+#define IDI_IE4                         157
+#define IDD_CONFIG                      158
+#define IDD_IMAGELIB                    159
+#define IDD_SCALE                       160
+#define IDD_SOUND                       162
+#define IDD_NEWNEKO                     163
+#define IDD_ABOUTBOX                    164
+#define IDC_PLAYING                     165
+#define IDD_EFFECTS                     165
+#define IDI_TAB_SOUNDS                  168
+#define IDI_TAB_MOVEMENT                169
+#define IDI_TAB_DISPLAY                 170
+#define IDI_TAB_INDEPENDENCE            171
+#define IDR_PLAYBITMAP                  172
+#define IDI_TAB_EFFECTS                 172
+#define IDC_CHANCESLIDER                1000
+#define IDC_CHANCE                      1002
+#define IDC_CHASECOMBO                  1003
+#define IDC_CHASERANDOM                 1007
+#define IDC_DESCRIPTION                 1009
+#define IDC_WEBPAGE                     1011
+#define IDC_EMAIL                       1013
+#define IDC_LIST1                       1014
+#define IDC_SOUNDSAVAIL                 1014
+#define IDC_SOUNDNAME                   1029
+#define IDC_BROWSE                      1030
+#define IDC_SOUNDFREQ                   1033
+#define IDC_NONE                        1034
+#define IDC_CHEESE                      1035
+#define IDC_SCALESCLIDE                 1036
+#define IDC_SCALESLIDER                 1036
+#define IDC_SCALEDISPLAY                1037
+#define IDC_IE4MODE                     1039
+#define IDC_SET100                      1040
+#define IDC_APPLY                       1041
+#define IDC_TABS                        1042
+#define IDC_NEWNEKO                     1043
+#define IDC_NEW                         1043
+#define IDC_DELETE                      1044
+#define IDC_NAME                        1045
+#define IDC_NEWNEKONAME                 1048
+#define IDC_ABOUT                       1049
+#define IDC_QUEUEDRAWING                1052
+#define IDC_HELP                        1053
+#define IDC_ACTION                      1054
+#define IDC_ACTIONDESC                  1055
+#define IDC_ALWAYSONTOP                 1056
+#define IDC_FOOTPRINTS                  1058
+
+// Next default values for new objects
+// 
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+#define _APS_NEXT_RESOURCE_VALUE        174
+#define _APS_NEXT_COMMAND_VALUE         40001
+#define _APS_NEXT_CONTROL_VALUE         1059
+#define _APS_NEXT_SYMED_VALUE           104
+#endif
+#endif

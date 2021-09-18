@@ -1,0 +1,31 @@
+// Microsoft Developer Studio generated Help ID include file.
+// Used by NekoCFG.rc
+//
+#define HIDCANCEL                       0x809e0002    // IDD_CONFIG
+#define HIDC_ABOUT                      0x809e0419    // IDD_CONFIG
+#define HIDC_ACTION                     0x806e041e    // IDD_INDEPENDENCE
+#define HIDC_ACTIONDESC                 0x806e041f    // IDD_INDEPENDENCE
+#define HIDC_ALWAYSONTOP                0x80700420    // IDD_DISPLAY
+#define HIDC_APPLY                      0x809e0411    // IDD_CONFIG
+#define HIDC_BROWSE                     0x80a20406    // IDD_SOUND
+#define HIDC_CHANGE                     0x8070006b    // IDD_DISPLAY
+#define HIDC_DEFAULT                    0x8070006c    // IDD_DISPLAY
+#define HIDC_DELETE                     0x809e0414    // IDD_CONFIG
+#define HIDC_FOOTPRINTS                 0x80a50422    // IDD_EFFECTS
+#define HIDC_HELP                       0x809e041d    // IDD_CONFIG
+#define HIDC_IMAGELIB                   0x80700068    // IDD_DISPLAY
+#define HIDC_NAME                       0x809e0415    // IDD_CONFIG
+#define HIDC_NEW                        0x809e0413    // IDD_CONFIG
+#define HIDC_NONE                       0x80a2040a    // IDD_SOUND
+#define HIDC_PREVIEW                    0x80a20069    // IDD_SOUND
+#define HIDC_SCALEDISPLAY               0x8070040d    // IDD_DISPLAY
+#define HIDC_SCALESLIDER                0x8070040c    // IDD_DISPLAY
+#define HIDC_SENSESLIDER                0x806d0067    // IDD_MOVEMENT
+#define HIDC_SET100                     0x80700410    // IDD_DISPLAY
+#define HIDC_SOUNDFREQ                  0x80a20409    // IDD_SOUND
+#define HIDC_SOUNDNAME                  0x80a20405    // IDD_SOUND
+#define HIDC_SOUNDSAVAIL                0x80a203f6    // IDD_SOUND
+#define HIDC_SPEEDSLIDER                0x806d0066    // IDD_MOVEMENT
+#define HIDC_TABS                       0x809e0412    // IDD_CONFIG
+#define HIDC_TASKBAR                    0x809e006a    // IDD_CONFIG
+#define HIDOK                           0x809e0001    // IDD_CONFIG

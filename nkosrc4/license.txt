@@ -1,0 +1,41 @@
+Neko 95/98 Source Code License
+
+Note: Because Neko was originally written by
+Masayuki Koba, and ported from his X-Windows
+source code by David Harvey, different portions
+of the Neko source code carry different licenses.
+
+
+IF YOU WANT TO CHARGE FOR YOUR SOFTWARE
+---------------------------------------
+If you use any of the following files in your software,
+you MAY NOT charge for it as it is covered by the GNU
+public license: 
+    Neko.h    Neko.cpp
+    Neko98.h  Neko98.cpp
+
+
+If you use any of the following files in your software,
+you MAY charge for it, but must send 20% of the profit or
+from that software, or $1000 to the author (address at the bottom).
+    Pet.h             Pe1t.cpp
+    DesktopHack.h     DesktopHack.cpp
+    DesktopPet.h      DesktopPet.cpp
+    AlwaysOnTopPet.h  AlwaysOnTopPet.cpp
+
+
+All other files can be used freely as long as credit is given.
+
+
+IF YOU DO NOT WANT TO CHARGE FOR YOUR SOFTWARE
+----------------------------------------------
+You are free to use the source files in any way you wish,
+as long as credit is given.
+
+
+AUTHOR'S ADDRESS
+----------------
+dharvey@btinternet.com
+For security reasons, mail me and I'll give out my address.
+
+

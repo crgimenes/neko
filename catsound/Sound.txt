@@ -1,0 +1,8 @@
+Sounds
+--------
+
+This set of five sounds is for neko95. to use these sounds,
+go to the neko configuration program, click on the "sounds"
+tab, and set each event to its corresponding .wav file.
+
+		Matt

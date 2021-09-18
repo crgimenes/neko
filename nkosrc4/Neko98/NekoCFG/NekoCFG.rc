@@ -1,0 +1,373 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "NekoCFG_resource.h"
+
+// Generated Help ID header file
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "NekoCFG_resource.hm"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.K.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APPICON             ICON    DISCARDABLE     "res\\appicon.ico"
+IDI_DEFAULT             ICON    DISCARDABLE     "..\\res\\Awake.ico"
+IDI_TAB_SOUNDS          ICON    DISCARDABLE     "Res\\sounds.ico"
+IDI_TAB_MOVEMENT        ICON    DISCARDABLE     "Res\\movement.ico"
+IDI_TAB_DISPLAY         ICON    DISCARDABLE     "Res\\displayi.ico"
+IDI_TAB_INDEPENDENCE    ICON    DISCARDABLE     "res\\independence.ico"
+IDI_TAB_EFFECTS         ICON    DISCARDABLE     "res\\tab_effects.ico"
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "DHSoft\0"
+            VALUE "FileDescription", "NekoCFG\0"
+            VALUE "FileVersion", "4.0g\0"
+            VALUE "InternalName", "NekoCFG\0"
+            VALUE "LegalCopyright", "Copyright © 1998\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "NekoCFG.exe\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "Neko Configuration Program\0"
+            VALUE "ProductVersion", "4.0g\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CONFIG DIALOGEX 0, 0, 312, 210
+STYLE DS_MODALFRAME | DS_SETFOREGROUND | DS_CENTER | DS_CONTEXTHELP | 
+    WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTROLPARENT
+CAPTION "Configure Neko"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Na&me:",IDC_STATIC,7,7,22,8
+    PUSHBUTTON      "&Add A New Neko...",IDC_NEW,13,108,75,14,0,0,HIDC_NEW
+    PUSHBUTTON      "&Delete",IDC_DELETE,93,108,41,14,0,0,HIDC_DELETE
+    GROUPBOX        "&General",IDC_STATIC,5,140,125,40
+    CONTROL         "Show &icon in taskbar",IDC_TASKBAR,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,15,160,80,10,0,HIDC_TASKBAR
+    PUSHBUTTON      "Abo&ut...",IDC_ABOUT,7,189,50,14,0,0,HIDC_ABOUT
+    CONTROL         "Tab1",IDC_TABS,"SysTabControl32",TCS_MULTILINE | 
+                    WS_TABSTOP,146,7,159,178,0,HIDC_TABS
+    DEFPUSHBUTTON   "OK",IDOK,145,189,50,14,0,0,HIDOK
+    PUSHBUTTON      "Cancel",IDCANCEL,200,189,50,14,0,0,HIDCANCEL
+    PUSHBUTTON      "&Apply",IDC_APPLY,255,189,50,14,0,0,HIDC_APPLY
+    PUSHBUTTON      "&Help",IDC_HELP,62,189,50,14,0,0,HIDC_HELP
+    LISTBOX         IDC_NAME,7,18,127,85,LBS_SORT | LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP,0,HIDC_NAME
+END
+
+IDD_MOVEMENT DIALOGEX 0, 0, 155, 151
+STYLE DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "&Speed",IDC_STATIC,7,7,141,48
+    CONTROL         "Slow",IDC_STATIC,"Static",SS_SIMPLE | WS_GROUP,12,23,15,
+                    8
+    CONTROL         "Slider1",IDC_SPEEDSLIDER,"msctls_trackbar32",
+                    TBS_NOTICKS | WS_TABSTOP,12,34,130,17,0,HIDC_SPEEDSLIDER
+    CONTROL         "Fast",IDC_STATIC,"Static",SS_SIMPLE | WS_GROUP,127,23,
+                    15,8
+    GROUPBOX        "&Mouse sensitivity",IDC_STATIC,7,65,141,45
+    CONTROL         "Low",IDC_STATIC,"Static",SS_SIMPLE | WS_GROUP,12,80,15,
+                    8
+    CONTROL         "Slider1",IDC_SENSESLIDER,"msctls_trackbar32",
+                    TBS_NOTICKS | WS_TABSTOP,12,90,130,17,0,HIDC_SENSESLIDER
+    CONTROL         "High",IDC_STATIC,"Static",SS_SIMPLE | WS_GROUP,127,80,
+                    15,8
+END
+
+IDD_SOUND DIALOGEX 0, 0, 155, 151
+STYLE DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "&Frequency",IDC_STATIC,8,7,140,63
+    LTEXT           "None",IDC_STATIC,14,18,20,8
+    CONTROL         "Slider1",IDC_SOUNDFREQ,"msctls_trackbar32",TBS_NOTICKS | 
+                    WS_TABSTOP,15,27,125,17,0,HIDC_SOUNDFREQ
+    LTEXT           "Always",IDC_STATIC,118,18,23,8
+    LTEXT           "&Event:",IDC_STATIC,10,77,22,8
+    LISTBOX         IDC_SOUNDSAVAIL,32,76,116,43,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_TABSTOP,0,HIDC_SOUNDSAVAIL
+    LTEXT           "Na&me:",IDC_STATIC,9,121,22,8
+    EDITTEXT        IDC_SOUNDNAME,35,121,113,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_BORDER,0,HIDC_SOUNDNAME
+    PUSHBUTTON      "",IDC_PREVIEW,10,134,15,14,BS_BITMAP,0,HIDC_PREVIEW
+    PUSHBUTTON      "&None",IDC_NONE,43,134,50,14,0,0,HIDC_NONE
+    PUSHBUTTON      "&Browse...",IDC_BROWSE,99,134,50,14,0,0,HIDC_BROWSE
+    LTEXT           "(Performance may be affected if this is much above 10%)",
+                    IDC_STATIC,15,47,130,20,0,WS_EX_TRANSPARENT
+    LTEXT           "Some",IDC_STATIC,66,18,20,8
+END
+
+IDD_NEWNEKO DIALOG DISCARDABLE  0, 0, 213, 66
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Neko"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_DEFAULT,IDC_STATIC,7,9,20,20
+    LTEXT           "Enter the &name for your new Neko:",IDC_STATIC,38,7,111,
+                    8
+    COMBOBOX        IDC_NEWNEKONAME,38,16,168,78,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,102,45,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,156,45,50,14
+END
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 182, 101
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Neko"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,65,80,50,14
+    ICON            IDI_DEFAULT,IDC_STATIC,5,10,21,20
+    LTEXT           "This program is proud to be FREEWARE!",IDC_STATIC,25,60,
+                    131,8
+    LTEXT           "Neko for Windows v4.0g\nPorted by David Harvey from\nX-Windows source code by Masayuki Koba",
+                    IDC_STATIC,35,10,142,25,0,WS_EX_TRANSPARENT
+    LTEXT           "http://www.geocities.com/siliconvalley/haven/4173/",
+                    IDC_STATIC,5,40,170,8
+END
+
+IDD_DISPLAY DIALOGEX 0, 0, 155, 151
+STYLE DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "&Size",IDC_STATIC,7,7,136,65
+    LTEXT           "Smaller",IDC_STATIC,12,20,24,8
+    LTEXT           "Larger",IDC_STATIC,122,20,21,8
+    CONTROL         "Slider1",IDC_SCALESLIDER,"msctls_trackbar32",
+                    TBS_NOTICKS | WS_TABSTOP,15,30,125,15,0,HIDC_SCALESLIDER
+    LTEXT           "Scale:",IDC_STATIC,36,55,21,8
+    LTEXT           "100%",IDC_SCALEDISPLAY,62,55,25,8,0,0,HIDC_SCALEDISPLAY
+    PUSHBUTTON      "Use &Default",IDC_SET100,92,52,50,14,0,0,HIDC_SET100
+    GROUPBOX        "&Image library",IDC_STATIC,7,76,136,54
+    LTEXT           "&File name:",IDC_STATIC,15,88,33,8
+    EDITTEXT        IDC_IMAGELIB,15,98,125,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_BORDER,0,HIDC_IMAGELIB
+    PUSHBUTTON      "&Change...",IDC_CHANGE,36,112,50,15,0,0,HIDC_CHANGE
+    PUSHBUTTON      "&Use Default",IDC_DEFAULT,92,112,50,15,0,0,HIDC_DEFAULT
+    CONTROL         "Alwa&ys On Top",IDC_ALWAYSONTOP,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,134,64,10,0,
+                    HIDC_ALWAYSONTOP
+END
+
+IDD_INDEPENDENCE DIALOGEX 0, 0, 155, 149
+STYLE DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "&Behaviour",IDC_STATIC,7,7,141,58
+    LTEXT           "&Action:",IDC_STATIC,15,23,23,8
+    COMBOBOX        IDC_ACTION,40,19,100,66,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP,0,HIDC_ACTION
+    LTEXT           "(none)",IDC_ACTIONDESC,15,35,125,25,0,0,HIDC_ACTIONDESC
+END
+
+IDD_EFFECTS DIALOGEX 0, 0, 155, 151
+STYLE DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "&Footprint Images",IDC_STATIC,7,7,141,74
+    CONTROL         "&Enable Footprints",IDC_FOOTPRINTS,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,18,71,10,0,
+                    HIDC_FOOTPRINTS
+    LTEXT           "&File name:",IDC_STATIC,14,33,33,8
+    EDITTEXT        IDC_IMAGELIB,14,43,125,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_BORDER,0,HIDC_IMAGELIB
+    PUSHBUTTON      "&Change...",IDC_CHANGE,35,59,50,15,0,0,HIDC_CHANGE
+    PUSHBUTTON      "&Use Default",IDC_DEFAULT,91,59,50,15,0,0,HIDC_DEFAULT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_CONFIG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 305
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 203
+    END
+
+    IDD_MOVEMENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+
+    IDD_SOUND, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        VERTGUIDE, 10
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 149
+        HORZGUIDE, 137
+    END
+
+    IDD_NEWNEKO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 206
+        VERTGUIDE, 38
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 59
+        HORZGUIDE, 29
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 175
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 94
+    END
+
+    IDD_DISPLAY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+
+    IDD_INDEPENDENCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 142
+    END
+
+    IDD_EFFECTS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "NekoCFG_resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_PLAYING             CURSOR  DISCARDABLE     "res\\playing.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_PLAYBITMAP          BITMAP  DISCARDABLE     "res\\play.bmp"
+#endif    // English (U.K.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
