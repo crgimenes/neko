@@ -29,18 +29,18 @@ var (
 	f embed.FS
 )
 
-type mascot struct {
+type neko struct {
 	x      int
 	y      int
 	count  int
 	sprite string
 }
 
-func (m *mascot) Layout(outsideWidth, outsideHeight int) (int, int) {
+func (m *neko) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return width, height
 }
 
-func (m *mascot) Update() error {
+func (m *neko) Update() error {
 	mx, my := ebiten.CursorPosition()
 
 	m.count++
@@ -92,7 +92,7 @@ func (m *mascot) Update() error {
 	return nil
 }
 
-func (m *mascot) Draw(screen *ebiten.Image) {
+func (m *neko) Draw(screen *ebiten.Image) {
 	img := mSprite["up1"]
 	switch {
 	case m.count >= 0 && m.count <= 7:
@@ -124,7 +124,7 @@ func main() {
 	}
 
 	sw, sh := ebiten.ScreenSizeInFullscreen()
-	n := &mascot{
+	n := &neko{
 		x: sw / 2,
 		y: sh / 2,
 	}
