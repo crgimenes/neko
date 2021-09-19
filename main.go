@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"embed"
 	_ "embed"
-	"fmt"
 	"image"
 	_ "image/png"
 	"io/fs"
@@ -19,8 +18,9 @@ import (
 )
 
 const (
-	width  = 32
-	height = 32
+	scale  = 2.0
+	width  = 32 * scale
+	height = 32 * scale
 )
 
 var (
@@ -64,8 +64,8 @@ func (m *neko) Update() error {
 		dx = dx * (-1)
 	}
 	m.distance = dx + dy
-	fmt.Println(m.distance)
 
+	// get mouse direction
 	r := math.Atan2(float64(y), float64(x))
 	tr := 0.0
 	if r <= 0 {
@@ -74,6 +74,9 @@ func (m *neko) Update() error {
 	a := (r / math.Pi * 180) + tr
 
 	switch {
+	case m.distance < width:
+		// idle state
+		m.sprite = "wash"
 	case a < 292.5 && a > 247.5:
 		m.y--
 		m.sprite = "up"
@@ -118,6 +121,7 @@ func (m *neko) Draw(screen *ebiten.Image) {
 		m.count = 0
 	}
 	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(scale, scale)
 	screen.DrawImage(img, op)
 }
 
@@ -148,7 +152,8 @@ func main() {
 	ebiten.SetWindowDecorated(false)
 	ebiten.SetWindowFloating(true)
 	ebiten.SetWindowSize(width, height)
-	if err := ebiten.RunGame(n); err != nil {
+	err := ebiten.RunGame(n)
+	if err != nil {
 		log.Fatal(err)
 	}
 }
