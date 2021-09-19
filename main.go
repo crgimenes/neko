@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	_ "embed"
+	"fmt"
 	"image"
 	_ "image/png"
 	"io/fs"
@@ -30,10 +31,11 @@ var (
 )
 
 type neko struct {
-	x      int
-	y      int
-	count  int
-	sprite string
+	x        int
+	y        int
+	distance int
+	count    int
+	sprite   string
 }
 
 func (m *neko) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -46,10 +48,23 @@ func (m *neko) Update() error {
 	m.count++
 
 	//sw, sh := ebiten.ScreenSizeInFullscreen()
+
+	// set the window position
 	ebiten.SetWindowPosition(m.x, m.y)
 
 	x := mx - (height / 2)
 	y := my - (width / 2)
+
+	// get distance from sprite to mouse
+	dy, dx := y, x
+	if dy < 0 {
+		dy = dy * (-1)
+	}
+	if dx < 0 {
+		dx = dx * (-1)
+	}
+	m.distance = dx + dy
+	fmt.Println(m.distance)
 
 	r := math.Atan2(float64(y), float64(x))
 	tr := 0.0
