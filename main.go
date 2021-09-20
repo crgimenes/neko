@@ -113,13 +113,15 @@ func (m *neko) Update() error {
 func (m *neko) Draw(screen *ebiten.Image) {
 	img := mSprite["up1"]
 	switch {
-	case m.count >= 0 && m.count <= 7:
+	case m.count < 8:
 		img = mSprite[m.sprite+"1"]
-	case m.count >= 8 && m.count <= 16:
-		img = mSprite[m.sprite+"2"]
 	default:
+		img = mSprite[m.sprite+"2"]
+	}
+	if m.count > 16 {
 		m.count = 0
 	}
+
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(scale, scale)
 	screen.DrawImage(img, op)
