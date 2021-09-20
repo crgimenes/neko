@@ -65,6 +65,12 @@ func (m *neko) Update() error {
 	}
 	m.distance = dx + dy
 
+	if m.distance < width {
+		// idle state
+		m.sprite = "wash"
+		return nil
+	}
+
 	// get mouse direction
 	r := math.Atan2(float64(y), float64(x))
 	tr := 0.0
@@ -74,36 +80,44 @@ func (m *neko) Update() error {
 	a := (r / math.Pi * 180) + tr
 
 	switch {
-	case m.distance < width:
-		// idle state
-		m.sprite = "wash"
-	case a < 292.5 && a > 247.5:
+	case a <= 292.5 && a > 247.5:
 		m.y--
+	case a <= 337.5 && a > 292.5:
+		m.x++
+		m.y--
+	case a <= 22.5 || a > 337.5:
+		m.x++
+	case a <= 67.5 && a > 22.5:
+		m.x++
+		m.y++
+	case a <= 112.5 && a > 67.5:
+		m.y++
+	case a <= 157.5 && a > 112.5:
+		m.x--
+		m.y++
+	case a <= 202.5 && a > 157.5:
+		m.x--
+	case a <= 247.5 && a > 202.5:
+		m.x--
+		m.y--
+	}
+
+	switch {
+	case a < 292 && a > 247:
 		m.sprite = "up"
-	case a < 337.5 && a > 292.5:
-		m.x++
-		m.y--
+	case a < 337 && a > 292:
 		m.sprite = "upright"
-	case a < 22.5 || a > 337.5:
-		m.x++
+	case a < 22 || a > 337:
 		m.sprite = "right"
-	case a < 67.5 && a > 22.5:
-		m.x++
-		m.y++
+	case a < 67 && a > 22:
 		m.sprite = "downright"
-	case a < 112.5 && a > 67.5:
-		m.y++
+	case a < 112 && a > 67:
 		m.sprite = "down"
-	case a < 157.5 && a > 112.5:
-		m.x--
-		m.y++
+	case a < 157 && a > 112:
 		m.sprite = "downleft"
-	case a < 202.5 && a > 157.5:
-		m.x--
+	case a < 202 && a > 157:
 		m.sprite = "left"
-	case a < 247.5 && a > 202.5:
-		m.x--
-		m.y--
+	case a < 247 && a > 202:
 		m.sprite = "upleft"
 	}
 
