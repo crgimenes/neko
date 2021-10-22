@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"embed"
-	_ "embed"
 	"image"
 	_ "image/png"
 	"io/fs"
@@ -47,7 +46,7 @@ func (m *neko) Update() error {
 
 	m.count++
 
-	//sw, sh := ebiten.ScreenSizeInFullscreen()
+	// sw, sh := ebiten.ScreenSizeInFullscreen()
 
 	// set the window position
 	ebiten.SetWindowPosition(m.x, m.y)
@@ -58,25 +57,27 @@ func (m *neko) Update() error {
 	// get distance from sprite to mouse
 	dy, dx := y, x
 	if dy < 0 {
-		dy = dy * (-1)
+		dy *= -1
 	}
-	if dx < 0 {
-		dx = dx * (-1)
-	}
-	m.distance = dx + dy
 
+	if dx < 0 {
+		dx *= -1
+	}
+
+	m.distance = dx + dy
 	if m.distance < width {
 		// idle state
 		m.sprite = "wash"
 		return nil
 	}
 
+	tr := 0.0
 	// get mouse direction
 	r := math.Atan2(float64(y), float64(x))
-	tr := 0.0
 	if r <= 0 {
 		tr = 360
 	}
+
 	a := (r / math.Pi * 180) + tr
 
 	switch {
@@ -125,13 +126,15 @@ func (m *neko) Update() error {
 }
 
 func (m *neko) Draw(screen *ebiten.Image) {
-	img := mSprite["up1"]
+	var img *ebiten.Image
+
 	switch {
 	case m.count < 8:
 		img = mSprite[m.sprite+"1"]
 	default:
 		img = mSprite[m.sprite+"2"]
 	}
+
 	if m.count > 16 {
 		m.count = 0
 	}
@@ -143,19 +146,20 @@ func (m *neko) Draw(screen *ebiten.Image) {
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
+
 	mSprite = make(map[string]*ebiten.Image)
 
 	a, _ := fs.ReadDir(f, "assets")
 	for _, v := range a {
 		data, _ := f.ReadFile("assets/" + v.Name())
+
 		img, _, err := image.Decode(bytes.NewReader(data))
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		name := strings.TrimSuffix(v.Name(), filepath.Ext(v.Name()))
 		mSprite[name] = ebiten.NewImageFromImage(img)
-
-		//fmt.Printf("%q\n", name)
 	}
 
 	sw, sh := ebiten.ScreenSizeInFullscreen()
@@ -168,6 +172,7 @@ func main() {
 	ebiten.SetWindowDecorated(false)
 	ebiten.SetWindowFloating(true)
 	ebiten.SetWindowSize(width, height)
+
 	err := ebiten.RunGame(n)
 	if err != nil {
 		log.Fatal(err)
