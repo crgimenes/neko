@@ -4,7 +4,7 @@ before:
 builds:
   -
     goos:
-      #- darwin
+      - darwin
       - linux
       - windows
 
