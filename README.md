@@ -1,5 +1,7 @@
 # Neko
 
+![noko](https://github.com/crgimenes/neko/blob/main/assets/awake.png)
+
 [Neko](https://en.wikipedia.org/wiki/Neko_(software)) is a cat that chases the mouse cursor across the screen, an app written in the late 1980s and ported for many platforms.
 
 This code is a re-implementation using Golang and **has no relationship to the original software**. Furthermore, this version does not use any part of the source code except sprites and sounds.
