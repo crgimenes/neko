@@ -1,4 +1,4 @@
-module github.com/crgimenes/neko
+module crg.eti.br/go/neko
 
 go 1.19
 
