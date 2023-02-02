@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"embed"
+	"flag"
 	"image"
 	_ "image/png"
 	"io/fs"
@@ -16,17 +17,17 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const (
-	scale  = 2.0
-	width  = 32 * scale
-	height = 32 * scale
-)
-
 var (
 	mSprite map[string]*ebiten.Image
 
 	//go:embed assets/*.png
 	f embed.FS
+
+	speed = 2
+	scale = 2.0
+
+	width  = 32
+	height = 32
 )
 
 type neko struct {
@@ -82,25 +83,25 @@ func (m *neko) Update() error {
 
 	switch {
 	case a <= 292.5 && a > 247.5:
-		m.y--
+		m.y -= speed
 	case a <= 337.5 && a > 292.5:
-		m.x++
-		m.y--
+		m.x += speed
+		m.y -= speed
 	case a <= 22.5 || a > 337.5:
-		m.x++
+		m.x += speed
 	case a <= 67.5 && a > 22.5:
-		m.x++
-		m.y++
+		m.x += speed
+		m.y += speed
 	case a <= 112.5 && a > 67.5:
-		m.y++
+		m.y += speed
 	case a <= 157.5 && a > 112.5:
-		m.x--
-		m.y++
+		m.x -= speed
+		m.y += speed
 	case a <= 202.5 && a > 157.5:
-		m.x--
+		m.x -= speed
 	case a <= 247.5 && a > 202.5:
-		m.x--
-		m.y--
+		m.x -= speed
+		m.y -= speed
 	}
 
 	switch {
@@ -145,6 +146,13 @@ func (m *neko) Draw(screen *ebiten.Image) {
 }
 
 func main() {
+	flag.IntVar(&speed, "speed", speed, "cat speed")
+	flag.Float64Var(&scale, "scale", scale, "cat scale")
+	flag.Parse()
+
+	width *= int(scale)
+	height *= int(scale)
+
 	rand.Seed(time.Now().UnixNano())
 
 	mSprite = make(map[string]*ebiten.Image)
