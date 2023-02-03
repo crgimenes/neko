@@ -35,6 +35,7 @@ type neko struct {
 	y        int
 	distance int
 	count    int
+	state    int
 	sprite   string
 }
 
@@ -68,9 +69,31 @@ func (m *neko) Update() error {
 	m.distance = dx + dy
 	if m.distance < width {
 		// idle state
-		m.sprite = "wash"
+		switch m.state {
+		case 0:
+			m.state = 1
+			fallthrough
+
+		case 1, 2, 3:
+			m.sprite = "awake"
+
+		case 4, 5, 6:
+			m.sprite = "scratch"
+
+		case 7, 8, 9:
+			m.sprite = "wash"
+
+		case 10, 11, 12:
+			m.sprite = "yawn"
+
+		default:
+			m.sprite = "sleep"
+		}
+
 		return nil
 	}
+
+	m.state = 0
 
 	tr := 0.0
 	// get mouse direction
@@ -130,6 +153,8 @@ func (m *neko) Draw(screen *ebiten.Image) {
 	var img *ebiten.Image
 
 	switch {
+	case m.sprite == "awake":
+		img = mSprite[m.sprite]
 	case m.count < 8:
 		img = mSprite[m.sprite+"1"]
 	default:
@@ -138,6 +163,10 @@ func (m *neko) Draw(screen *ebiten.Image) {
 
 	if m.count > 16 {
 		m.count = 0
+
+		if m.state > 0 {
+			m.state++
+		}
 	}
 
 	op := &ebiten.DrawImageOptions{}
