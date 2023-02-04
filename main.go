@@ -35,6 +35,8 @@ type neko struct {
 	y        int
 	distance int
 	count    int
+	min      int
+	max      int
 	state    int
 	sprite   string
 }
@@ -84,6 +86,8 @@ func (m *neko) Update() error {
 			m.sprite = "wash"
 
 		case 10, 11, 12:
+			m.min = 32
+			m.max = 64
 			m.sprite = "yawn"
 
 		default:
@@ -94,6 +98,8 @@ func (m *neko) Update() error {
 	}
 
 	m.state = 0
+	m.min = 8
+	m.max = 16
 
 	tr := 0.0
 	// get mouse direction
@@ -155,13 +161,13 @@ func (m *neko) Draw(screen *ebiten.Image) {
 	switch {
 	case m.sprite == "awake":
 		img = mSprite[m.sprite]
-	case m.count < 8:
+	case m.count < m.min:
 		img = mSprite[m.sprite+"1"]
 	default:
 		img = mSprite[m.sprite+"2"]
 	}
 
-	if m.count > 16 {
+	if m.count > m.max {
 		m.count = 0
 
 		if m.state > 0 {
@@ -201,8 +207,10 @@ func main() {
 
 	sw, sh := ebiten.ScreenSizeInFullscreen()
 	n := &neko{
-		x: sw / 2,
-		y: sh / 2,
+		x:   sw / 2,
+		y:   sh / 2,
+		min: 8,
+		max: 16,
 	}
 
 	ebiten.SetScreenTransparent(true)
