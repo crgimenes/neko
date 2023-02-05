@@ -1,0 +1,14 @@
+builds:
+  - goos:
+      - linux
+      - windows
+    goarch:
+      - amd64
+archives:
+  - format: binary
+    name_template: "{{ .ProjectName }}_{{ .Os }}"
+checksum:
+  # goreleaser-pro is required to merge checksums. Multiple runs are
+  #   required because Ebitengine only supports crossbuild for Windows
+  #   machines
+  disable: true
