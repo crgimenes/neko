@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"embed"
+	"flag"
 	"image"
 	_ "image/png"
 	"io/fs"
@@ -16,17 +17,17 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const (
-	scale  = 2.0
-	width  = 32 * scale
-	height = 32 * scale
-)
-
 var (
 	mSprite map[string]*ebiten.Image
 
 	//go:embed assets/*.png
 	f embed.FS
+
+	speed = 2
+	scale = 2.0
+
+	width  = 32
+	height = 32
 )
 
 type neko struct {
@@ -34,6 +35,9 @@ type neko struct {
 	y        int
 	distance int
 	count    int
+	min      int
+	max      int
+	state    int
 	sprite   string
 }
 
@@ -67,9 +71,35 @@ func (m *neko) Update() error {
 	m.distance = dx + dy
 	if m.distance < width {
 		// idle state
-		m.sprite = "wash"
+		switch m.state {
+		case 0:
+			m.state = 1
+			fallthrough
+
+		case 1, 2, 3:
+			m.sprite = "awake"
+
+		case 4, 5, 6:
+			m.sprite = "scratch"
+
+		case 7, 8, 9:
+			m.sprite = "wash"
+
+		case 10, 11, 12:
+			m.min = 32
+			m.max = 64
+			m.sprite = "yawn"
+
+		default:
+			m.sprite = "sleep"
+		}
+
 		return nil
 	}
+
+	m.state = 0
+	m.min = 8
+	m.max = 16
 
 	tr := 0.0
 	// get mouse direction
@@ -82,25 +112,25 @@ func (m *neko) Update() error {
 
 	switch {
 	case a <= 292.5 && a > 247.5:
-		m.y--
+		m.y -= speed
 	case a <= 337.5 && a > 292.5:
-		m.x++
-		m.y--
+		m.x += speed
+		m.y -= speed
 	case a <= 22.5 || a > 337.5:
-		m.x++
+		m.x += speed
 	case a <= 67.5 && a > 22.5:
-		m.x++
-		m.y++
+		m.x += speed
+		m.y += speed
 	case a <= 112.5 && a > 67.5:
-		m.y++
+		m.y += speed
 	case a <= 157.5 && a > 112.5:
-		m.x--
-		m.y++
+		m.x -= speed
+		m.y += speed
 	case a <= 202.5 && a > 157.5:
-		m.x--
+		m.x -= speed
 	case a <= 247.5 && a > 202.5:
-		m.x--
-		m.y--
+		m.x -= speed
+		m.y -= speed
 	}
 
 	switch {
@@ -129,14 +159,20 @@ func (m *neko) Draw(screen *ebiten.Image) {
 	var img *ebiten.Image
 
 	switch {
-	case m.count < 8:
+	case m.sprite == "awake":
+		img = mSprite[m.sprite]
+	case m.count < m.min:
 		img = mSprite[m.sprite+"1"]
 	default:
 		img = mSprite[m.sprite+"2"]
 	}
 
-	if m.count > 16 {
+	if m.count > m.max {
 		m.count = 0
+
+		if m.state > 0 {
+			m.state++
+		}
 	}
 
 	op := &ebiten.DrawImageOptions{}
@@ -145,6 +181,13 @@ func (m *neko) Draw(screen *ebiten.Image) {
 }
 
 func main() {
+	flag.IntVar(&speed, "speed", speed, "cat speed")
+	flag.Float64Var(&scale, "scale", scale, "cat scale")
+	flag.Parse()
+
+	width *= int(scale)
+	height *= int(scale)
+
 	rand.Seed(time.Now().UnixNano())
 
 	mSprite = make(map[string]*ebiten.Image)
@@ -164,8 +207,10 @@ func main() {
 
 	sw, sh := ebiten.ScreenSizeInFullscreen()
 	n := &neko{
-		x: sw / 2,
-		y: sh / 2,
+		x:   sw / 2,
+		y:   sh / 2,
+		min: 8,
+		max: 16,
 	}
 
 	ebiten.SetScreenTransparent(true)
