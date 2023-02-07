@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"embed"
-	"flag"
 	"image"
 	_ "image/png"
 	"io/fs"
@@ -15,19 +14,9 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-)
 
-var (
-	mSprite map[string]*ebiten.Image
-
-	//go:embed assets/*.png
-	f embed.FS
-
-	speed = 2
-	scale = 2.0
-
-	width  = 32
-	height = 32
+	"crg.eti.br/go/config"
+	_ "crg.eti.br/go/config/ini"
 )
 
 type neko struct {
@@ -40,6 +29,23 @@ type neko struct {
 	state    int
 	sprite   string
 }
+
+type Config struct {
+	Speed int     `ini:"speed" cfg:"speed" cfgDefault:"2" cfgHelper:"The speed of the cat."`
+	Scale float64 `ini:"scale" cfg:"scale" cfgDefault:"2.0" cfgHelper:"The scale of the cat."`
+}
+
+var (
+	mSprite map[string]*ebiten.Image
+
+	//go:embed assets/*.png
+	f embed.FS
+
+	width  = 32
+	height = 32
+
+	cfg = &Config{}
+)
 
 func (m *neko) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return width, height
@@ -112,25 +118,25 @@ func (m *neko) Update() error {
 
 	switch {
 	case a <= 292.5 && a > 247.5:
-		m.y -= speed
+		m.y -= cfg.Speed
 	case a <= 337.5 && a > 292.5:
-		m.x += speed
-		m.y -= speed
+		m.x += cfg.Speed
+		m.y -= cfg.Speed
 	case a <= 22.5 || a > 337.5:
-		m.x += speed
+		m.x += cfg.Speed
 	case a <= 67.5 && a > 22.5:
-		m.x += speed
-		m.y += speed
+		m.x += cfg.Speed
+		m.y += cfg.Speed
 	case a <= 112.5 && a > 67.5:
-		m.y += speed
+		m.y += cfg.Speed
 	case a <= 157.5 && a > 112.5:
-		m.x -= speed
-		m.y += speed
+		m.x -= cfg.Speed
+		m.y += cfg.Speed
 	case a <= 202.5 && a > 157.5:
-		m.x -= speed
+		m.x -= cfg.Speed
 	case a <= 247.5 && a > 202.5:
-		m.x -= speed
-		m.y -= speed
+		m.x -= cfg.Speed
+		m.y -= cfg.Speed
 	}
 
 	switch {
@@ -176,17 +182,17 @@ func (m *neko) Draw(screen *ebiten.Image) {
 	}
 
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(scale, scale)
+	op.GeoM.Scale(cfg.Scale, cfg.Scale)
 	screen.DrawImage(img, op)
 }
 
 func main() {
-	flag.IntVar(&speed, "speed", speed, "cat speed")
-	flag.Float64Var(&scale, "scale", scale, "cat scale")
-	flag.Parse()
+	config.PrefixEnv = "NEKO"
+	config.File = "neko.ini"
+	config.Parse(cfg)
 
-	width *= int(scale)
-	height *= int(scale)
+	width *= int(cfg.Scale)
+	height *= int(cfg.Scale)
 
 	rand.Seed(time.Now().UnixNano())
 
