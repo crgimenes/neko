@@ -1,0 +1,218 @@
+name: Build Executables
+on: [push]
+jobs:
+
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    - name: Install dependencies
+      shell: bash
+      run: sudo apt-get update && sudo apt-get -y install libgl1-mesa-dev xorg-dev libasound2-dev
+    - name: Run tests
+      shell: bash
+      run: xvfb-run go test -v ./...
+
+  build-win:
+    name: Build Windows binary
+    needs: tests
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    - name: Build Windows exe
+      shell: bash
+      run: go build
+    - name: Upload Windows exe
+      uses: actions/upload-artifact@v3
+      with:
+        name: neko-win
+        path: |
+          LICENSE
+          neko.exe
+
+  build-mac:
+    name: Build MacOS binary
+    needs: tests
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    - name: Build Mac exe
+      shell: bash
+      run: go build
+    - name: Tar it up
+      shell: bash
+      run: tar -zcvf neko-mac.tar.gz neko LICENSE
+    - name: Upload Mac exe
+      uses: actions/upload-artifact@v3
+      with:
+        name: neko-mac
+        path: neko-mac.tar.gz
+
+  build-lin:
+    name: Build Linux binary
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    - name: Install dependencies
+      shell: bash
+      run: sudo apt-get update && sudo apt-get -y install libgl1-mesa-dev xorg-dev libasound2-dev
+    - name: Build Linux exe
+      shell: bash
+      run: go build -v
+    - name: Tar it up
+      shell: bash
+      run: tar -zcvf neko-lin.tar.gz neko LICENSE
+    - name: Upload Linux exe
+      uses: actions/upload-artifact@v3
+      with:
+        name: neko-lin
+        path: neko-lin.tar.gz
+
+  build-web:
+    name: Build Web binary
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    - name: Build Web binary
+      shell: bash
+      run: GOOS=js GOARCH=wasm go build -v -ldflags "-w -s" -o dist/web/neko.wasm
+    - name: Copy WASM exec script
+      shell: bash
+      run: cp $(go env GOROOT)/misc/wasm/wasm_exec.js dist/web/.
+    - name: Upload Web build
+      uses: actions/upload-artifact@v3
+      with:
+        name: neko-web
+        path: |
+          dist/web/
+          LICENSE
+
+  upload-bundle:
+    name: Bundle binaries with dev assets
+    runs-on: ubuntu-latest
+    needs: [build-lin, build-mac, build-win]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Download Windows binary
+      uses: actions/download-artifact@v3
+      with:
+        name: neko-win
+    - name: Download Linux binary
+      uses: actions/download-artifact@v3
+      with:
+        name: neko-lin
+    - name: Download Mac binary
+      uses: actions/download-artifact@v3
+      with:
+        name: neko-mac
+    - name: Upload beta testing bundle
+      uses: actions/upload-artifact@v3
+      with:
+        name: neko-bundle
+        path: |
+          README.md
+          LICENSE
+          neko-lin.tar.gz
+          neko-mac.tar.gz
+          neko.exe
+
+  deploy-win:
+    name: Deploy Windows build to itch.io
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: build-win
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: neko-win
+    - uses: josephbmanley/butler-publish-itchio-action@master
+      env:
+        BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+        CHANNEL: windows
+        ITCH_GAME: neko
+        ITCH_USER: sinisterstuf
+        PACKAGE: neko.exe
+        VERSION: ${{github.ref_name}}
+
+  deploy-mac:
+    name: Deploy MacOs build to itch.io
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: build-mac
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: neko-mac
+    - name: Extract tarball
+      shell: bash
+      run: tar -zxvf neko-mac.tar.gz
+    - uses: josephbmanley/butler-publish-itchio-action@master
+      env:
+        BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+        CHANNEL: mac
+        ITCH_GAME: neko
+        ITCH_USER: sinisterstuf
+        PACKAGE: neko
+        VERSION: ${{github.ref_name}}
+
+  deploy-lin:
+    name: Deploy Linux build to itch.io
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: build-lin
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: neko-lin
+    - name: Extract tarball
+      shell: bash
+      run: tar -zxvf neko-lin.tar.gz
+    - uses: josephbmanley/butler-publish-itchio-action@master
+      env:
+        BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+        CHANNEL: linux
+        ITCH_GAME: neko
+        ITCH_USER: sinisterstuf
+        PACKAGE: neko
+        VERSION: ${{github.ref_name}}
+
+  deploy-web:
+    name: Deploy Web build to itch.io
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: build-web
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: neko-web
+    - uses: josephbmanley/butler-publish-itchio-action@master
+      env:
+        BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+        CHANNEL: web
+        ITCH_GAME: neko
+        ITCH_USER: sinisterstuf
+        PACKAGE: dist/web
+        VERSION: ${{github.ref_name}}
