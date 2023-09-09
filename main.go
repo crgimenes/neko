@@ -8,10 +8,8 @@ import (
 	"io/fs"
 	"log"
 	"math"
-	"math/rand"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
@@ -204,8 +202,6 @@ func main() {
 
 	width *= int(cfg.Scale)
 	height *= int(cfg.Scale)
-
-	rand.Seed(time.Now().UnixNano())
 
 	mSprite = make(map[string]*ebiten.Image)
 
