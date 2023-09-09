@@ -20,14 +20,16 @@ import (
 )
 
 type neko struct {
-	x        int
-	y        int
-	distance int
-	count    int
-	min      int
-	max      int
-	state    int
-	sprite   string
+	x          int
+	y          int
+	distance   int
+	count      int
+	min        int
+	max        int
+	state      int
+	sprite     string
+	lastSprite string
+	img        *ebiten.Image
 }
 
 type Config struct {
@@ -162,16 +164,17 @@ func (m *neko) Update() error {
 }
 
 func (m *neko) Draw(screen *ebiten.Image) {
-	var img *ebiten.Image
-
+	var sprite string
 	switch {
 	case m.sprite == "awake":
-		img = mSprite[m.sprite]
+		sprite = m.sprite
 	case m.count < m.min:
-		img = mSprite[m.sprite+"1"]
+		sprite = m.sprite + "1"
 	default:
-		img = mSprite[m.sprite+"2"]
+		sprite = m.sprite + "2"
 	}
+
+	m.img = mSprite[sprite]
 
 	if m.count > m.max {
 		m.count = 0
@@ -181,9 +184,17 @@ func (m *neko) Draw(screen *ebiten.Image) {
 		}
 	}
 
+	if m.lastSprite == sprite {
+		return
+	}
+
+	m.lastSprite = sprite
+
+	screen.Clear()
+
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(cfg.Scale, cfg.Scale)
-	screen.DrawImage(img, op)
+	screen.DrawImage(m.img, op)
 }
 
 func main() {
@@ -219,12 +230,16 @@ func main() {
 		max: 16,
 	}
 
-	ebiten.SetScreenTransparent(true)
 	ebiten.SetWindowDecorated(false)
 	ebiten.SetWindowFloating(true)
 	ebiten.SetWindowSize(width, height)
+	ebiten.SetTPS(50)
+	ebiten.SetScreenClearedEveryFrame(false)
+	ebiten.SetVsyncEnabled(true)
 
-	err := ebiten.RunGame(n)
+	err := ebiten.RunGameWithOptions(n, &ebiten.RunGameOptions{
+		ScreenTransparent: true,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
