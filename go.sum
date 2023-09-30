@@ -31,6 +31,8 @@ github.com/hajimehoshi/file2byteslice v1.0.0/go.mod h1:CqqAHp7Dk/AqQiwuhV1yT2334
 github.com/hajimehoshi/go-mp3 v0.3.3/go.mod h1:qMJj/CSDxx6CGHiZeCgbiq2DSUkbK0UbtXShQcnfyMM=
 github.com/hajimehoshi/oto v0.6.1/go.mod h1:0QXGEkbuJRohbJaxr7ZQSxnju7hEhseiPx2hrh6raOI=
 github.com/hajimehoshi/oto/v2 v2.3.1/go.mod h1:seWLbgHH7AyUMYKfKYT9pg7PhUu9/SisyJvNTT+ASQo=
+github.com/hajimehoshi/oto/v2 v2.4.1 h1:iTfZSulqdmQ5Hh4tVyVzNnK3aA4SgjbDapSM0YH3Lc4=
+github.com/hajimehoshi/oto/v2 v2.4.1/go.mod h1:guyF8uIgSrchrKewS1E6Xyx7joUbKOi4g9W7vpcYBSc=
 github.com/jakecoffman/cp v1.2.1/go.mod h1:JjY/Fp6d8E1CHnu74gWNnU0+b9VzEdUVPoJxg2PsTQg=
 github.com/jezek/xgb v1.0.1 h1:YUGhxps0aR7J2Xplbs23OHnV1mWaxFVcOl9b+1RQkt8=
 github.com/jezek/xgb v1.0.1/go.mod h1:nrhwO0FX/enq75I7Y7G8iN1ubpSGZEiA3v9e9GyRFlk=
