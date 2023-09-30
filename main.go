@@ -5,6 +5,7 @@ import (
 	"embed"
 	"image"
 	_ "image/png"
+	"io"
 	"io/fs"
 	"log"
 	"math"
@@ -12,6 +13,9 @@ import (
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 
 	"crg.eti.br/go/config"
 	_ "crg.eti.br/go/config/ini"
@@ -37,24 +41,39 @@ type Config struct {
 
 var (
 	mSprite map[string]*ebiten.Image
+	mSound  map[string][]byte
 
-	//go:embed assets/*.png
+	//go:embed assets/*
 	f embed.FS
 
 	width  = 32
 	height = 32
 
 	cfg = &Config{}
+
+	currentplayer *audio.Player = nil
 )
 
 func (m *neko) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return width, height
 }
 
+func playsound(sound []byte) {
+	if currentplayer != nil && currentplayer.IsPlaying() {
+		currentplayer.Close()
+	}
+	currentplayer = audio.CurrentContext().NewPlayerFromBytes(sound)
+	currentplayer.SetVolume(.3)
+	currentplayer.Play()
+}
+
 func (m *neko) Update() error {
 	mx, my := ebiten.CursorPosition()
 
 	m.count++
+	if m.state == 10 && m.count == m.min {
+		playsound(mSound["idle3"])
+	}
 
 	// sw, sh := ebiten.ScreenSizeInFullscreen()
 
@@ -103,6 +122,9 @@ func (m *neko) Update() error {
 		return nil
 	}
 
+	if m.state >= 13 {
+		playsound(mSound["awake"])
+	}
 	m.state = 0
 	m.min = 8
 	m.max = 16
@@ -179,6 +201,10 @@ func (m *neko) Draw(screen *ebiten.Image) {
 
 		if m.state > 0 {
 			m.state++
+			switch m.state {
+			case 13:
+				playsound(mSound["sleep"])
+			}
 		}
 	}
 
@@ -204,19 +230,42 @@ func main() {
 	height *= int(cfg.Scale)
 
 	mSprite = make(map[string]*ebiten.Image)
+	mSound = make(map[string][]byte)
 
 	a, _ := fs.ReadDir(f, "assets")
 	for _, v := range a {
 		data, _ := f.ReadFile("assets/" + v.Name())
 
-		img, _, err := image.Decode(bytes.NewReader(data))
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		name := strings.TrimSuffix(v.Name(), filepath.Ext(v.Name()))
-		mSprite[name] = ebiten.NewImageFromImage(img)
+		ext := filepath.Ext(v.Name())
+
+		switch ext {
+		case ".png":
+			img, _, err := image.Decode(bytes.NewReader(data))
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			mSprite[name] = ebiten.NewImageFromImage(img)
+		case ".wav":
+			stream, err := wav.DecodeWithSampleRate(44100, bytes.NewReader(data))
+			if err != nil {
+				log.Fatal(err)
+			}
+			data, err := io.ReadAll(stream)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			mSound[name] = data
+		}
 	}
+
+	audio.NewContext(44100)
+
+	// Workaround: for some reason playing the first sound can incur significant delay.
+	// So let's do this at the start.
+	audio.CurrentContext().NewPlayerFromBytes([]byte{}).Play()
 
 	sw, sh := ebiten.ScreenSizeInFullscreen()
 	n := &neko{
