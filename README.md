@@ -6,11 +6,11 @@
 
 ![Neco](https://github.com/crgimenes/neko/blob/master/fixtures/neko.gif)
 
-This code is a re-implementation using Golang and **has no relationship to the original software**. Furthermore, this version does not use any part of the source code except sprites and sounds.
+This code is a re-implementation using Golang and **has no relationship to the original software**. Furthermore, this version does not use any part of the original source code except sprites and sounds.
 
-The goal is to demonstrate the Go language with a fun and very nostalgic example for me, without necessarily being tied to the behavior of the original version.
+The goal is to demonstrate the Go language with a fun and very nostalgic example, without necessarily being tied to the behavior of the original version.
 
-In this example, we used the [Ebiten](https://ebiten.org), an incredibly easy-to-use gaming library with a vibrant community.
+In this example, we used the [Ebitengine](https://ebitengine.org), an incredibly easy-to-use gaming library with a vibrant community.
 
 ## How to Contribute
 
