@@ -80,16 +80,6 @@ func (m *neko) Update() error {
 	// or randomly travelling to another monitor
 	m.x = max(0, min(m.x, monitorWidth))
 	m.y = max(0, min(m.y, monitorHeight))
-	if m.x < 0 {
-		m.x = 0
-	} else if m.x >= monitorWidth {
-		m.x = monitorWidth
-	}
-	if m.y < 0 {
-		m.y = 0
-	} else if m.y >= monitorHeight {
-		m.y = monitorHeight
-	}
 	ebiten.SetWindowPosition(m.x, m.y)
 
 	mx, my := ebiten.CursorPosition()
