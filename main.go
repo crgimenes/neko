@@ -79,7 +79,7 @@ func (m *neko) Update() error {
 	// Prevents neko from being stuck on the side of the screen
 	// or randomly travelling to another monitor
 	m.x = max(0, min(m.x, monitorWidth))
-	m.y = max(0, min(m.y, monitorWidth))
+	m.y = max(0, min(m.y, monitorHeight))
 	if m.x < 0 {
 		m.x = 0
 	} else if m.x >= monitorWidth {
