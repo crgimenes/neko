@@ -51,6 +51,8 @@ var (
 	width  = 32
 	height = 32
 
+	monitorWidth, monitorHeight = ebiten.ScreenSizeInFullscreen()
+
 	cfg = &Config{}
 
 	currentplayer *audio.Player = nil
@@ -60,7 +62,7 @@ func (m *neko) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return width, height
 }
 
-func playsound(sound []byte) {
+func playSound(sound []byte) {
 	if currentplayer != nil && currentplayer.IsPlaying() {
 		currentplayer.Close()
 	}
@@ -72,8 +74,12 @@ func playsound(sound []byte) {
 func (m *neko) Update() error {
 	m.count++
 	if m.state == 10 && m.count == m.min {
-		playsound(mSound["idle3"])
+		playSound(mSound["idle3"])
 	}
+	// Prevents neko from being stuck on the side of the screen
+	// or randomly travelling to another monitor
+	m.x = max(0, min(m.x, monitorWidth))
+	m.y = max(0, min(m.y, monitorHeight))
 	ebiten.SetWindowPosition(m.x, m.y)
 
 	mx, my := ebiten.CursorPosition()
@@ -98,11 +104,8 @@ func (m *neko) Update() error {
 	}
 
 	if m.state >= 13 {
-		playsound(mSound["awake"])
+		playSound(mSound["awake"])
 	}
-	m.state = 0
-	m.min = 8
-	m.max = 16
 	m.catchCursor(x, y)
 	return nil
 }
@@ -134,6 +137,9 @@ func (m *neko) stayIdle() {
 }
 
 func (m *neko) catchCursor(x, y int) {
+	m.state = 0
+	m.min = 8
+	m.max = 16
 	tr := 0.0
 	// get mouse direction
 	r := math.Atan2(float64(y), float64(x))
@@ -206,7 +212,7 @@ func (m *neko) Draw(screen *ebiten.Image) {
 			m.state++
 			switch m.state {
 			case 13:
-				playsound(mSound["sleep"])
+				playSound(mSound["sleep"])
 			}
 		}
 	}
@@ -270,10 +276,9 @@ func main() {
 	// So let's do this at the start.
 	audio.CurrentContext().NewPlayerFromBytes([]byte{}).Play()
 
-	sw, sh := ebiten.ScreenSizeInFullscreen()
 	n := &neko{
-		x:   sw / 2,
-		y:   sh / 2,
+		x:   monitorWidth / 2,
+		y:   monitorHeight / 2,
 		min: 8,
 		max: 16,
 	}
