@@ -12,3 +12,6 @@ The goal is to demonstrate the Go language with a fun and very nostalgic example
 
 In this example, we used the [Ebiten](https://ebiten.org), an incredibly easy-to-use gaming library with a vibrant community.
 
+## How to Contribute
+
+Please follow our [contribution guide](CONTRIBUTING.md).
