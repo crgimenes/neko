@@ -16,12 +16,14 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
 	"crg.eti.br/go/config"
 	_ "crg.eti.br/go/config/ini"
 )
 
 type neko struct {
+	waiting    bool
 	x          int
 	y          int
 	distance   int
@@ -68,57 +70,30 @@ func playsound(sound []byte) {
 }
 
 func (m *neko) Update() error {
-	mx, my := ebiten.CursorPosition()
-
 	m.count++
 	if m.state == 10 && m.count == m.min {
 		playsound(mSound["idle3"])
 	}
-
-	// sw, sh := ebiten.ScreenSizeInFullscreen()
-
-	// set the window position
 	ebiten.SetWindowPosition(m.x, m.y)
 
+	mx, my := ebiten.CursorPosition()
 	x := mx - (height / 2)
 	y := my - (width / 2)
 
-	// get distance from sprite to mouse
 	dy, dx := y, x
 	if dy < 0 {
-		dy *= -1
+		dy = -dy
 	}
-
 	if dx < 0 {
-		dx *= -1
+		dx = -dx
 	}
 
 	m.distance = dx + dy
-	if m.distance < width {
-		// idle state
-		switch m.state {
-		case 0:
-			m.state = 1
-			fallthrough
-
-		case 1, 2, 3:
-			m.sprite = "awake"
-
-		case 4, 5, 6:
-			m.sprite = "scratch"
-
-		case 7, 8, 9:
-			m.sprite = "wash"
-
-		case 10, 11, 12:
-			m.min = 32
-			m.max = 64
-			m.sprite = "yawn"
-
-		default:
-			m.sprite = "sleep"
+	if m.distance < width || m.waiting {
+		m.stayIdle()
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+			m.waiting = !m.waiting
 		}
-
 		return nil
 	}
 
@@ -128,7 +103,37 @@ func (m *neko) Update() error {
 	m.state = 0
 	m.min = 8
 	m.max = 16
+	m.catchCursor(x, y)
+	return nil
+}
 
+func (m *neko) stayIdle() {
+	// idle state
+	switch m.state {
+	case 0:
+		m.state = 1
+		fallthrough
+
+	case 1, 2, 3:
+		m.sprite = "awake"
+
+	case 4, 5, 6:
+		m.sprite = "scratch"
+
+	case 7, 8, 9:
+		m.sprite = "wash"
+
+	case 10, 11, 12:
+		m.min = 32
+		m.max = 64
+		m.sprite = "yawn"
+
+	default:
+		m.sprite = "sleep"
+	}
+}
+
+func (m *neko) catchCursor(x, y int) {
 	tr := 0.0
 	// get mouse direction
 	r := math.Atan2(float64(y), float64(x))
@@ -179,8 +184,6 @@ func (m *neko) Update() error {
 	case a < 247 && a > 202:
 		m.sprite = "upleft"
 	}
-
-	return nil
 }
 
 func (m *neko) Draw(screen *ebiten.Image) {
