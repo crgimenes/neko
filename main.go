@@ -39,6 +39,7 @@ type neko struct {
 type Config struct {
 	Speed int     `ini:"speed" cfg:"speed" cfgDefault:"2" cfgHelper:"The speed of the cat."`
 	Scale float64 `ini:"scale" cfg:"scale" cfgDefault:"2.0" cfgHelper:"The scale of the cat."`
+	Quiet bool    `ini:"quiet" cfg:"quiet" cfgDefault:"false" cfgHelper:"Disable sound."`
 }
 
 var (
@@ -63,6 +64,9 @@ func (m *neko) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func playSound(sound []byte) {
+	if cfg.Quiet {
+		return
+	}
 	if currentplayer != nil && currentplayer.IsPlaying() {
 		currentplayer.Close()
 	}
