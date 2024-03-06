@@ -287,15 +287,18 @@ func main() {
 		max: 16,
 	}
 
+	ebiten.SetRunnableOnUnfocused(true)
+	ebiten.SetScreenClearedEveryFrame(false)
+	ebiten.SetTPS(50)
+	ebiten.SetVsyncEnabled(true)
 	ebiten.SetWindowDecorated(false)
 	ebiten.SetWindowFloating(true)
 	ebiten.SetWindowSize(width, height)
-	ebiten.SetTPS(50)
-	ebiten.SetScreenClearedEveryFrame(false)
-	ebiten.SetVsyncEnabled(true)
+	ebiten.SetWindowTitle("Neko")
 
 	err := ebiten.RunGameWithOptions(n, &ebiten.RunGameOptions{
 		ScreenTransparent: true,
+		SkipTaskbar:       true,
 	})
 	if err != nil {
 		log.Fatal(err)
