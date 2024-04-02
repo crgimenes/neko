@@ -75,6 +75,8 @@ func playSound(sound []byte) {
 	currentplayer.Play()
 }
 
+var loaded = false
+
 func (m *neko) Update() error {
 	m.count++
 	if m.state == 10 && m.count == m.min {
@@ -85,6 +87,7 @@ func (m *neko) Update() error {
 	m.x = max(0, min(m.x, monitorWidth))
 	m.y = max(0, min(m.y, monitorHeight))
 	ebiten.SetWindowPosition(m.x, m.y)
+	ebiten.SetWindowFloating(true)
 
 	mx, my := ebiten.CursorPosition()
 	x := mx - (height / 2)
