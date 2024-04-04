@@ -10,16 +10,54 @@ on:
     branches: [ "master" ]
 
 jobs:
+  release:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: ${{ github.event.repository.name }}-linux-amd64
+            install_deps: sudo apt update && sudo apt install -y libc6-dev libgl1-mesa-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev libxxf86vm-dev libasound2-dev pkg-config
+            env_vars: GOOS=linux GOARCH=amd64
+          - os: ubuntu-latest
+            artifact_name: ${{ github.event.repository.name }}-windows-amd64.exe
+            install_deps: ""
+            env_vars: GOOS=windows GOARCH=amd64 CGO_ENABLED=0
+            build_args: -a -ldflags '-extldflags "-static" -s -w'
+          - os: macos-latest
+            artifact_name: ${{ github.event.repository.name }}-darwin-arm64
+            install_deps: ""
+            env_vars: GOOS=darwin GOARCH=arm64 CGO_ENABLED=1
+            build_args: -a -ldflags '-s -w'
+          - os: macos-latest
+            artifact_name: ${{ github.event.repository.name }}-darwin-amd64
+            install_deps: ""
+            env_vars: GOOS=darwin GOARCH=amd64 CGO_ENABLED=1
+            build_args: -a -ldflags '-s -w'
 
-  build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        go-version: '1.22'
+
+    - name: Install dependencies
+      run: ${{ matrix.install_deps }}
 
     - name: Build
-      run: go build -v ./...
+      run: ${{ matrix.env_vars }} go build ${{ matrix.build_args }} -o dist/${{ matrix.artifact_name }}
+
+    - name: Compress binaries
+      run: gzip dist/${{ matrix.artifact_name }}
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: dist/${{ matrix.artifact_name }}.gz
+        asset_name: ${{ matrix.artifact_name }}.gz
+        tag: ${{ github.ref }}
