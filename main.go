@@ -300,8 +300,11 @@ func main() {
 	ebiten.SetWindowTitle("Neko")
 
 	err := ebiten.RunGameWithOptions(n, &ebiten.RunGameOptions{
+		InitUnfocused:     true,
 		ScreenTransparent: true,
 		SkipTaskbar:       true,
+		X11ClassName:      "Neko",
+		X11InstanceName:   "Neko",
 	})
 	if err != nil {
 		log.Fatal(err)
