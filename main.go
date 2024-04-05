@@ -290,8 +290,6 @@ func main() {
 		max: 16,
 	}
 
-	log.Printf("Width: %d, Height: %d", width, height)
-
 	ebiten.SetRunnableOnUnfocused(true)
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetTPS(50)
