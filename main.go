@@ -303,8 +303,8 @@ func main() {
 		InitUnfocused:     true,
 		ScreenTransparent: true,
 		SkipTaskbar:       true,
-		X11ClassName:      "Neko",
-		X11InstanceName:   "Neko",
+		//X11ClassName:      "Neko", // Temporary disabled due to a bug in Ebiten
+		//X11InstanceName:   "Neko",
 	})
 	if err != nil {
 		log.Fatal(err)
