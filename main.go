@@ -242,8 +242,8 @@ func main() {
 	config.File = "neko.ini"
 	config.Parse(cfg)
 
-	width *= int(cfg.Scale)
-	height *= int(cfg.Scale)
+	width = int(float64(width) * cfg.Scale)
+	height = int(float64(height) * cfg.Scale)
 
 	mSprite = make(map[string]*ebiten.Image)
 	mSound = make(map[string][]byte)
@@ -289,6 +289,8 @@ func main() {
 		min: 8,
 		max: 16,
 	}
+
+	log.Printf("Width: %d, Height: %d", width, height)
 
 	ebiten.SetRunnableOnUnfocused(true)
 	ebiten.SetScreenClearedEveryFrame(false)
