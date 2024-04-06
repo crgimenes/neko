@@ -42,15 +42,17 @@ type Config struct {
 	Quiet bool    `ini:"quiet" cfg:"quiet" cfgDefault:"false" cfgHelper:"Disable sound."`
 }
 
+const (
+	width  = 32
+	height = 32
+)
+
 var (
 	mSprite map[string]*ebiten.Image
 	mSound  map[string][]byte
 
 	//go:embed assets/*
 	f embed.FS
-
-	width  = 32
-	height = 32
 
 	monitorWidth, monitorHeight = ebiten.ScreenSizeInFullscreen()
 
@@ -232,18 +234,13 @@ func (m *neko) Draw(screen *ebiten.Image) {
 
 	screen.Clear()
 
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(cfg.Scale, cfg.Scale)
-	screen.DrawImage(m.img, op)
+	screen.DrawImage(m.img, nil)
 }
 
 func main() {
 	config.PrefixEnv = "NEKO"
 	config.File = "neko.ini"
 	config.Parse(cfg)
-
-	width = int(float64(width) * cfg.Scale)
-	height = int(float64(height) * cfg.Scale)
 
 	mSprite = make(map[string]*ebiten.Image)
 	mSound = make(map[string][]byte)
@@ -296,7 +293,7 @@ func main() {
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetWindowDecorated(false)
 	ebiten.SetWindowFloating(true)
-	ebiten.SetWindowSize(width, height)
+	ebiten.SetWindowSize(int(float64(width)*cfg.Scale), int(float64(height)*cfg.Scale))
 	ebiten.SetWindowTitle("Neko")
 
 	err := ebiten.RunGameWithOptions(n, &ebiten.RunGameOptions{
