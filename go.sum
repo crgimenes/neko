@@ -12,6 +12,8 @@ github.com/ebitengine/purego v0.7.0 h1:HPZpl61edMGCEW6XK2nsR6+7AnJ3unUxpTZBkkIXn
 github.com/ebitengine/purego v0.7.0/go.mod h1:ah1In8AOtksoNK6yk5z1HTJeUkC1Ez4Wk2idgGslMwQ=
 github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406132856-3136de4958eb h1:ZDRMN3LJuHmaU2I7GmfPJBr2Ikeba5Akw7JcQICHNJ8=
 github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406132856-3136de4958eb/go.mod h1:1vjyPw+h3n30rfTOpIsbWRXSxZ0Oz1cYc6Tq/2DKoQg=
+github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406175607-4d268f5ce44b h1:Iit6TJ88TLW2W/zphVzUldjw2MUxm7Why52x5Kyqtss=
+github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406175607-4d268f5ce44b/go.mod h1:1vjyPw+h3n30rfTOpIsbWRXSxZ0Oz1cYc6Tq/2DKoQg=
 github.com/jezek/xgb v1.1.1 h1:bE/r8ZZtSv7l9gk6nU0mYx51aXrvnyb44892TwSaqS4=
 github.com/jezek/xgb v1.1.1/go.mod h1:nrhwO0FX/enq75I7Y7G8iN1ubpSGZEiA3v9e9GyRFlk=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

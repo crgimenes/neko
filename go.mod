@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	crg.eti.br/go/config v1.5.0
-	github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406132856-3136de4958eb
+	github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406175607-4d268f5ce44b
 )
 
 require (
