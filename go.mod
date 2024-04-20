@@ -1,4 +1,4 @@
-module crg.eti.br/go/neko
+module neko
 
 go 1.22
 
