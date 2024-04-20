@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	crg.eti.br/go/config v1.5.0
-	github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406175607-4d268f5ce44b
+	github.com/hajimehoshi/ebiten/v2 v2.7.1
 )
 
 require (
@@ -12,7 +12,7 @@ require (
 	github.com/ebitengine/gomobile v0.0.0-20240329170434-1771503ff0a8 // indirect
 	github.com/ebitengine/hideconsole v1.0.0 // indirect
 	github.com/ebitengine/oto/v3 v3.2.0 // indirect
-	github.com/ebitengine/purego v0.7.0 // indirect
+	github.com/ebitengine/purego v0.7.1 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
