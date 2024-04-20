@@ -12,6 +12,18 @@ The goal is to demonstrate the Go language with a fun and very nostalgic example
 
 In this example, we used the [Ebitengine](https://ebitengine.org), an incredibly easy-to-use gaming library with a vibrant community.
 
+## How to run
+
+Note that some operating systems may restrict the execution of binaries downloaded from the internet for security reasons. Please consult your operating system documentation to learn how to enable Neko to run.
+
+## Parameters
+
+- `-speed` The speed of the cat (default 2).
+- `-scale` The scale of the cat on the screen (default 2.0).
+- `-quiet` Disable sound.
+- `-h` Show help.
+
+
 ## How to Contribute
 
 
