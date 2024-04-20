@@ -18,6 +18,8 @@ github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406175607-4d268f5ce44b h1:Iit6TJ8
 github.com/hajimehoshi/ebiten/v2 v2.7.1-0.20240406175607-4d268f5ce44b/go.mod h1:1vjyPw+h3n30rfTOpIsbWRXSxZ0Oz1cYc6Tq/2DKoQg=
 github.com/hajimehoshi/ebiten/v2 v2.7.1 h1:v/t/IeQxd2eTtZ0QjJsUKL/fiGNeF64tYXjXbyJehzQ=
 github.com/hajimehoshi/ebiten/v2 v2.7.1/go.mod h1:1vjyPw+h3n30rfTOpIsbWRXSxZ0Oz1cYc6Tq/2DKoQg=
+github.com/hajimehoshi/ebiten/v2 v2.7.2 h1:5HcWAjxhGMBocJh0jH/61Kx4QJ91HkzYtSeSucvVg7o=
+github.com/hajimehoshi/ebiten/v2 v2.7.2/go.mod h1:1vjyPw+h3n30rfTOpIsbWRXSxZ0Oz1cYc6Tq/2DKoQg=
 github.com/jezek/xgb v1.1.1 h1:bE/r8ZZtSv7l9gk6nU0mYx51aXrvnyb44892TwSaqS4=
 github.com/jezek/xgb v1.1.1/go.mod h1:nrhwO0FX/enq75I7Y7G8iN1ubpSGZEiA3v9e9GyRFlk=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
