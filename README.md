@@ -18,9 +18,10 @@ Note that some operating systems may restrict the execution of binaries download
 
 ## Parameters
 
-- `-speed` The speed of the cat (default 2).
-- `-scale` The scale of the cat on the screen (default 2.0).
+- `-mousepassthrough` Enable mouse passthrough (default false).
 - `-quiet` Disable sound.
+- `-scale` The scale of the cat on the screen (default 2.0).
+- `-speed` The speed of the cat (default 2).
 - `-h` Show help.
 
 
