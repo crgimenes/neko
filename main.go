@@ -37,9 +37,10 @@ type neko struct {
 }
 
 type Config struct {
-	Speed int     `ini:"speed" cfg:"speed" cfgDefault:"2" cfgHelper:"The speed of the cat."`
-	Scale float64 `ini:"scale" cfg:"scale" cfgDefault:"2.0" cfgHelper:"The scale of the cat."`
-	Quiet bool    `ini:"quiet" cfg:"quiet" cfgDefault:"false" cfgHelper:"Disable sound."`
+	Speed            int     `cfg:"speed" cfgDefault:"2" cfgHelper:"The speed of the cat."`
+	Scale            float64 `cfg:"scale" cfgDefault:"2.0" cfgHelper:"The scale of the cat."`
+	Quiet            bool    `cfg:"quiet" cfgDefault:"false" cfgHelper:"Disable sound."`
+	MousePassthrough bool    `cfg:"mousepassthrough" cfgDefault:"false" cfgHelper:"Enable mouse passthrough."`
 }
 
 const (
@@ -291,6 +292,7 @@ func main() {
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetWindowDecorated(false)
 	ebiten.SetWindowFloating(true)
+	ebiten.SetWindowMousePassthrough(cfg.MousePassthrough)
 	ebiten.SetWindowSize(int(float64(width)*cfg.Scale), int(float64(height)*cfg.Scale))
 	ebiten.SetWindowTitle("Neko")
 
