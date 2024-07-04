@@ -158,24 +158,24 @@ func (m *neko) catchCursor(x, y int) {
 	a := (r / math.Pi * 180) + tr
 
 	switch {
-	case a <= 292.5 && a > 247.5:
+	case a <= 292.5 && a > 247.5: // up
 		m.y -= cfg.Speed
-	case a <= 337.5 && a > 292.5:
+	case a <= 337.5 && a > 292.5: // up right
 		m.x += cfg.Speed
 		m.y -= cfg.Speed
-	case a <= 22.5 || a > 337.5:
+	case a <= 22.5 || a > 337.5: // right
 		m.x += cfg.Speed
-	case a <= 67.5 && a > 22.5:
+	case a <= 67.5 && a > 22.5: // down right
 		m.x += cfg.Speed
 		m.y += cfg.Speed
-	case a <= 112.5 && a > 67.5:
+	case a <= 112.5 && a > 67.5: // down
 		m.y += cfg.Speed
-	case a <= 157.5 && a > 112.5:
+	case a <= 157.5 && a > 112.5: // down left
 		m.x -= cfg.Speed
 		m.y += cfg.Speed
-	case a <= 202.5 && a > 157.5:
+	case a <= 202.5 && a > 157.5: // left
 		m.x -= cfg.Speed
-	case a <= 247.5 && a > 202.5:
+	case a <= 247.5 && a > 202.5: // up left
 		m.x -= cfg.Speed
 		m.y -= cfg.Speed
 	}
