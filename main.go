@@ -56,7 +56,7 @@ var (
 	//go:embed assets/*
 	f embed.FS
 
-	monitorWidth, monitorHeight = ebiten.ScreenSizeInFullscreen()
+	monitorWidth, monitorHeight = ebiten.Monitor().Size()
 
 	cfg = &Config{}
 
