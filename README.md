@@ -16,7 +16,11 @@ In this example, we used the [Ebitengine](https://ebitengine.org), an incredibly
 
 Note that some operating systems may restrict the execution of binaries downloaded from the internet for security reasons. Please consult your operating system documentation to learn how to enable Neko to run.
 
-## Parameters
+$ cd neko
+
+$ go run ./main.go
+
+Parameters
 
 - `-mousepassthrough` Enable mouse passthrough (default false).
 - `-quiet` Disable sound.
@@ -24,8 +28,6 @@ Note that some operating systems may restrict the execution of binaries download
 - `-speed` The speed of the cat (default 2).
 - `-h` Show help.
 
-
 ## How to Contribute
-
 
 Please follow our [contribution guide](CONTRIBUTING.md).
