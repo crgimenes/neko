@@ -16,9 +16,10 @@ In this example, we used the [Ebitengine](https://ebitengine.org), an incredibly
 
 Note that some operating systems may restrict the execution of binaries downloaded from the internet for security reasons. Please consult your operating system documentation to learn how to enable Neko to run.
 
-$ cd neko
-
-$ go run ./main.go
+```bash
+cd neko
+go run ./main.go
+```
 
 Parameters
 
