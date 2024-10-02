@@ -29,6 +29,31 @@ Parameters
 - `-speed` The speed of the cat (default 2).
 - `-h` Show help.
 
+## How to install
+
+Before installing Neko, make sure you have Go installed on your system, as we will be using `go install`.
+
+Install dependencies, build, and install the project into your Go bin directory:
+
+```bash
+cd neko
+go mod tidy
+go install
+```
+
+To use Neko globally across your system, check if your Go bin directory is in your `$PATH` by running:
+
+```bash
+echo $PATH
+```
+If you don't see a Go bin directory, you'll need to add the following line to your `~/.bashrc`, `~/.zshrc`, or the equivalent shell configuration file:
+
+```bash
+export PATH=$PATH:$(go env GOPATH)/bin
+```
+
+After that, you can simply run `neko` in your terminal. If you want it to start with your system, you can add it to your `.xinitrc` or a similar startup script.
+
 ## How to Contribute
 
 Please follow our [contribution guide](CONTRIBUTING.md).
