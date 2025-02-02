@@ -17,10 +17,16 @@ In this example, we used the [Ebitengine](https://ebitengine.org), an incredibly
 Note that some operating systems may restrict the execution of binaries downloaded from the internet for security reasons. Please consult your operating system documentation to learn how to enable Neko to run.
 
 ```bash
-cd neko
-go run ./main.go
+export CGO_ENABLED=1
+go run main.go
 ```
 
+Or you can build the binary and run it:
+
+```bash
+export CGO_ENABLED=1
+go build -o neko main.go
+```
 Parameters
 
 - `-mousepassthrough` Enable mouse passthrough (default false).
