@@ -24,8 +24,8 @@ import (
 
 type neko struct {
 	waiting    bool
-	x          int
-	y          int
+	x          float64
+	y          float64
 	distance   int
 	count      int
 	min        int
@@ -37,7 +37,7 @@ type neko struct {
 }
 
 type Config struct {
-	Speed            int     `cfg:"speed" cfgDefault:"2" cfgHelper:"The speed of the cat."`
+	Speed            float64 `cfg:"speed" cfgDefault:"2.0" cfgHelper:"The speed of the cat."`
 	Scale            float64 `cfg:"scale" cfgDefault:"2.0" cfgHelper:"The scale of the cat."`
 	Quiet            bool    `cfg:"quiet" cfgDefault:"false" cfgHelper:"Disable sound."`
 	MousePassthrough bool    `cfg:"mousepassthrough" cfgDefault:"false" cfgHelper:"Enable mouse passthrough."`
@@ -86,9 +86,9 @@ func (m *neko) Update() error {
 	}
 	// Prevents neko from being stuck on the side of the screen
 	// or randomly travelling to another monitor
-	m.x = max(0, min(m.x, monitorWidth))
-	m.y = max(0, min(m.y, monitorHeight))
-	ebiten.SetWindowPosition(m.x, m.y)
+	m.x = max(0, min(m.x, float64(monitorWidth)))
+	m.y = max(0, min(m.y, float64(monitorHeight)))
+	ebiten.SetWindowPosition(int(math.Round(m.x)), int(math.Round(m.y)))
 
 	mx, my := ebiten.CursorPosition()
 	x := mx - (height / 2)
@@ -158,22 +158,22 @@ func (m *neko) catchCursor(x, y int) {
 		m.y -= cfg.Speed
 		m.sprite = "up"
 	case a <= 337.5 && a > 292.5: // up right
-		m.x += cfg.Speed
-		m.y -= cfg.Speed
+		m.x += cfg.Speed / math.Sqrt2
+		m.y -= cfg.Speed / math.Sqrt2
 		m.sprite = "upright"
 	case a <= 22.5 || a > 337.5: // right
 		m.x += cfg.Speed
 		m.sprite = "right"
 	case a <= 67.5 && a > 22.5: // down right
-		m.x += cfg.Speed
-		m.y += cfg.Speed
+		m.x += cfg.Speed / math.Sqrt2
+		m.y += cfg.Speed / math.Sqrt2
 		m.sprite = "downright"
 	case a <= 112.5 && a > 67.5: // down
 		m.y += cfg.Speed
 		m.sprite = "down"
 	case a <= 157.5 && a > 112.5: // down left
-		m.x -= cfg.Speed
-		m.y += cfg.Speed
+		m.x -= cfg.Speed / math.Sqrt2
+		m.y += cfg.Speed / math.Sqrt2
 		m.sprite = "downleft"
 	case a <= 202.5 && a > 157.5: // left
 		m.x -= cfg.Speed
@@ -265,8 +265,8 @@ func main() {
 	audio.CurrentContext().NewPlayerFromBytes([]byte{}).Play()
 
 	n := &neko{
-		x:   monitorWidth / 2,
-		y:   monitorHeight / 2,
+		x:   float64(monitorWidth / 2),
+		y:   float64(monitorHeight / 2),
 		min: 8,
 		max: 16,
 	}
