@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"embed"
 	"fmt"
@@ -10,7 +11,10 @@ import (
 	"io/fs"
 	"log"
 	"math"
+	"os"
 	"path"
+	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -18,9 +22,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-
-	"crg.eti.br/go/config"
-	_ "crg.eti.br/go/config/ini"
 )
 
 type neko struct {
@@ -32,8 +33,9 @@ type neko struct {
 	min        int
 	max        int
 	state      int
-	sprite     string
-	lastSprite string
+	sprite        string
+	lastSprite    string
+	lastDirection string
 	img        *ebiten.Image
 
 	cfg           *Config
@@ -44,10 +46,60 @@ type neko struct {
 }
 
 type Config struct {
-	Speed            float64 `cfg:"speed" cfgDefault:"2.0" cfgHelper:"The speed of the cat."`
-	Scale            float64 `cfg:"scale" cfgDefault:"2.0" cfgHelper:"The scale of the cat."`
-	Quiet            bool    `cfg:"quiet" cfgDefault:"false" cfgHelper:"Disable sound."`
-	MousePassthrough bool    `cfg:"mousepassthrough" cfgDefault:"false" cfgHelper:"Enable mouse passthrough."`
+	Speed            float64
+	Scale            float64
+	Quiet            bool
+	MousePassthrough bool
+}
+
+// loadConfig reads neko.ini from the same directory as the executable.
+// Supported keys: speed, scale, quiet, mousepassthrough
+func loadConfig() *Config {
+	cfg := &Config{
+		Speed: 2.0,
+		Scale: 2.0,
+	}
+
+	exePath, err := os.Executable()
+	if err != nil {
+		return cfg
+	}
+	iniPath := filepath.Join(filepath.Dir(exePath), "neko.ini")
+
+	f, err := os.Open(iniPath)
+	if err != nil {
+		return cfg
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, ";") || strings.HasPrefix(line, "#") {
+			continue
+		}
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+		key := strings.ToLower(strings.TrimSpace(parts[0]))
+		val := strings.TrimSpace(parts[1])
+		switch key {
+		case "speed":
+			if v, err := strconv.ParseFloat(val, 64); err == nil {
+				cfg.Speed = v
+			}
+		case "scale":
+			if v, err := strconv.ParseFloat(val, 64); err == nil {
+				cfg.Scale = v
+			}
+		case "quiet":
+			cfg.Quiet = val == "true" || val == "1"
+		case "mousepassthrough":
+			cfg.MousePassthrough = val == "true" || val == "1"
+		}
+	}
+	return cfg
 }
 
 const (
@@ -96,15 +148,7 @@ func (m *neko) Update() error {
 		m.playSound("idle3")
 	}
 
-	// Prevents neko from being stuck on the side of the screen
-	// or randomly travelling to another monitor
-	monitorWidth, monitorHeight := ebiten.Monitor().Size()
-	windowWidth, windowHeight := ebiten.WindowSize()
-	maxX := float64(max(0, monitorWidth-windowWidth))
-	maxY := float64(max(0, monitorHeight-windowHeight))
-
-	m.x = max(0, min(m.x, maxX))
-	m.y = max(0, min(m.y, maxY))
+	// Move the window to follow the cat position (no clamping — allows multi-monitor roaming).
 	ebiten.SetWindowPosition(int(math.Round(m.x)), int(math.Round(m.y)))
 
 	mx, my := ebiten.CursorPosition()
@@ -159,7 +203,45 @@ func (m *neko) catchCursor(x, y int) {
 
 	// get mouse direction
 	r := math.Atan2(float64(y), float64(x))
-	a := math.Mod((r/math.Pi*180)+360, 360) // Normazing angle to [0, 360)
+	a := math.Mod((r/math.Pi*180)+360, 360) // Normalizing angle to [0, 360)
+
+	// Hysteresis: if the angle is within 5° of any direction boundary,
+	// keep the last direction to prevent flickering between animations.
+	const hysteresis = 5.0
+	boundaries := [8]float64{22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5}
+	for _, b := range boundaries {
+		diff := math.Abs(a - b)
+		if diff > 180 {
+			diff = 360 - diff
+		}
+		if diff < hysteresis && m.lastDirection != "" {
+			m.sprite = m.lastDirection
+			// Still move in the last direction so the cat doesn't freeze
+			switch m.lastDirection {
+			case "up":
+				m.y -= m.cfg.Speed
+			case "upright":
+				m.x += m.cfg.Speed / math.Sqrt2
+				m.y -= m.cfg.Speed / math.Sqrt2
+			case "right":
+				m.x += m.cfg.Speed
+			case "downright":
+				m.x += m.cfg.Speed / math.Sqrt2
+				m.y += m.cfg.Speed / math.Sqrt2
+			case "down":
+				m.y += m.cfg.Speed
+			case "downleft":
+				m.x -= m.cfg.Speed / math.Sqrt2
+				m.y += m.cfg.Speed / math.Sqrt2
+			case "left":
+				m.x -= m.cfg.Speed
+			case "upleft":
+				m.x -= m.cfg.Speed / math.Sqrt2
+				m.y -= m.cfg.Speed / math.Sqrt2
+			}
+			return
+		}
+	}
 
 	switch {
 	case a <= 292.5 && a > 247.5: // up
@@ -191,6 +273,7 @@ func (m *neko) catchCursor(x, y int) {
 		m.y -= m.cfg.Speed / math.Sqrt2
 		m.sprite = "upleft"
 	}
+	m.lastDirection = m.sprite
 }
 
 func (m *neko) Draw(screen *ebiten.Image) {
@@ -275,13 +358,7 @@ func loadAssets(assetsFS fs.FS, sampleRate int) (map[string]*ebiten.Image, map[s
 }
 
 func main() {
-	cfg := &Config{}
-
-	config.PrefixEnv = "NEKO"
-	config.File = "neko.ini"
-	if err := config.Parse(cfg); err != nil {
-		log.Fatal(err)
-	}
+	cfg := loadConfig()
 
 	sprites, sounds, err := loadAssets(f, sampleRate)
 	if err != nil {
