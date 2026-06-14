@@ -52,11 +52,29 @@ type Config struct {
 	MousePassthrough bool
 }
 
+type movementDirection int
+
 const (
-	width       = 32
-	height      = 32
-	sampleRate  = 44100
-	soundVolume = 0.3
+	directionRight movementDirection = iota
+	directionDownRight
+	directionDown
+	directionDownLeft
+	directionLeft
+	directionUpLeft
+	directionUp
+	directionUpRight
+	directionCount
+)
+
+const (
+	width                = 32
+	height               = 32
+	sampleRate           = 44100
+	soundVolume          = 0.3
+	directionSectorAngle = 45.0
+	directionHalfSector  = directionSectorAngle / 2
+	// A small overlap keeps the animation stable without changing movement.
+	directionHysteresis = 3.0
 )
 
 var (
@@ -90,6 +108,70 @@ func absInt(v int) int {
 		return -v
 	}
 	return v
+}
+
+func angularDistance(a, b float64) float64 {
+	distance := math.Abs(a - b)
+	return min(distance, 360-distance)
+}
+
+func parseMovementDirection(sprite string) (movementDirection, bool) {
+	switch sprite {
+	case "right":
+		return directionRight, true
+	case "downright":
+		return directionDownRight, true
+	case "down":
+		return directionDown, true
+	case "downleft":
+		return directionDownLeft, true
+	case "left":
+		return directionLeft, true
+	case "upleft":
+		return directionUpLeft, true
+	case "up":
+		return directionUp, true
+	case "upright":
+		return directionUpRight, true
+	default:
+		return 0, false
+	}
+}
+
+func (d movementDirection) sprite() string {
+	switch d {
+	case directionRight:
+		return "right"
+	case directionDownRight:
+		return "downright"
+	case directionDown:
+		return "down"
+	case directionDownLeft:
+		return "downleft"
+	case directionLeft:
+		return "left"
+	case directionUpLeft:
+		return "upleft"
+	case directionUp:
+		return "up"
+	case directionUpRight:
+		return "upright"
+	default:
+		return ""
+	}
+}
+
+func spriteDirection(angle float64, previous string) string {
+	if direction, ok := parseMovementDirection(previous); ok {
+		center := float64(direction) * directionSectorAngle
+		if angularDistance(angle, center) <= directionHalfSector+directionHysteresis {
+			return previous
+		}
+	}
+
+	index := int(math.Ceil((angle - directionHalfSector) / directionSectorAngle))
+	index = (index + int(directionCount)) % int(directionCount)
+	return movementDirection(index).sprite()
 }
 
 func (m *neko) Update() error {
@@ -162,36 +244,29 @@ func (m *neko) catchCursor(x, y int) {
 	// get mouse direction
 	r := math.Atan2(float64(y), float64(x))
 	a := math.Mod((r/math.Pi*180)+360, 360) // Normazing angle to [0, 360)
+	m.sprite = spriteDirection(a, m.sprite)
 
 	switch {
 	case a <= 292.5 && a > 247.5: // up
 		m.y -= m.cfg.Speed
-		m.sprite = "up"
 	case a <= 337.5 && a > 292.5: // up right
 		m.x += m.cfg.Speed / math.Sqrt2
 		m.y -= m.cfg.Speed / math.Sqrt2
-		m.sprite = "upright"
 	case a <= 22.5 || a > 337.5: // right
 		m.x += m.cfg.Speed
-		m.sprite = "right"
 	case a <= 67.5 && a > 22.5: // down right
 		m.x += m.cfg.Speed / math.Sqrt2
 		m.y += m.cfg.Speed / math.Sqrt2
-		m.sprite = "downright"
 	case a <= 112.5 && a > 67.5: // down
 		m.y += m.cfg.Speed
-		m.sprite = "down"
 	case a <= 157.5 && a > 112.5: // down left
 		m.x -= m.cfg.Speed / math.Sqrt2
 		m.y += m.cfg.Speed / math.Sqrt2
-		m.sprite = "downleft"
 	case a <= 202.5 && a > 157.5: // left
 		m.x -= m.cfg.Speed
-		m.sprite = "left"
 	case a <= 247.5 && a > 202.5: // up left
 		m.x -= m.cfg.Speed / math.Sqrt2
 		m.y -= m.cfg.Speed / math.Sqrt2
-		m.sprite = "upleft"
 	}
 }
 
