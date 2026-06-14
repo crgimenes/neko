@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"embed"
+	"flag"
 	"fmt"
 	"image"
 	_ "image/png"
@@ -10,7 +11,9 @@ import (
 	"io/fs"
 	"log"
 	"math"
+	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -19,8 +22,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
-	"crg.eti.br/go/config"
-	_ "crg.eti.br/go/config/ini"
+	"github.com/crgimenes/filo"
 )
 
 type neko struct {
@@ -44,10 +46,10 @@ type neko struct {
 }
 
 type Config struct {
-	Speed            float64 `cfg:"speed" cfgDefault:"2.0" cfgHelper:"The speed of the cat."`
-	Scale            float64 `cfg:"scale" cfgDefault:"2.0" cfgHelper:"The scale of the cat."`
-	Quiet            bool    `cfg:"quiet" cfgDefault:"false" cfgHelper:"Disable sound."`
-	MousePassthrough bool    `cfg:"mousepassthrough" cfgDefault:"false" cfgHelper:"Enable mouse passthrough."`
+	Speed            float64
+	Scale            float64
+	Quiet            bool
+	MousePassthrough bool
 }
 
 const (
@@ -274,14 +276,81 @@ func loadAssets(assetsFS fs.FS, sampleRate int) (map[string]*ebiten.Image, map[s
 	return sprites, sounds, nil
 }
 
-func main() {
-	cfg := &Config{}
+// configPath returns the path to the Filo config file. A local "neko_init.filo"
+// in the current directory takes precedence; otherwise the XDG config location
+// "$XDG_CONFIG_HOME/neko/init.filo" (defaulting to ~/.config/neko/init.filo) is
+// used.
+func configPath() string {
+	const local = "neko_init.filo"
+	if fileExists(local) {
+		return local
+	}
 
-	config.PrefixEnv = "NEKO"
-	config.File = "neko.ini"
-	if err := config.Parse(cfg); err != nil {
+	configHome := os.Getenv("XDG_CONFIG_HOME")
+	if configHome == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return local
+		}
+		configHome = filepath.Join(home, ".config")
+	}
+	return filepath.Join(configHome, "neko", "init.filo")
+}
+
+func fileExists(name string) bool {
+	info, err := os.Stat(name)
+	return err == nil && !info.IsDir()
+}
+
+// loadConfig builds the configuration from defaults, overriding them with any
+// values set in the Filo config file (if present).
+func loadConfig() *Config {
+	cfg := &Config{
+		Speed:            2.0,
+		Scale:            2.0,
+		Quiet:            false,
+		MousePassthrough: false,
+	}
+
+	name := configPath()
+	if !fileExists(name) {
+		return cfg
+	}
+
+	f := filo.New()
+	defer f.Close()
+
+	f.SetGlobal("Speed", cfg.Speed)
+	f.SetGlobal("Scale", cfg.Scale)
+	f.SetGlobal("Quiet", cfg.Quiet)
+	f.SetGlobal("MousePassthrough", cfg.MousePassthrough)
+
+	b, err := os.ReadFile(filepath.Clean(name))
+	if err != nil {
 		log.Fatal(err)
 	}
+	if err := f.DoString(string(b)); err != nil {
+		log.Fatal(err)
+	}
+
+	cfg.Speed = f.MustGetNumber("Speed")
+	cfg.Scale = f.MustGetNumber("Scale")
+	cfg.Quiet = f.MustGetBool("Quiet")
+	cfg.MousePassthrough = f.MustGetBool("MousePassthrough")
+
+	return cfg
+}
+
+func main() {
+	cfg := loadConfig()
+
+	// Command-line flags override the Filo config file. Their defaults are the
+	// values loaded above, so a flag only takes effect when explicitly passed.
+	flag.Float64Var(&cfg.Speed, "speed", cfg.Speed, "The speed of the cat.")
+	flag.Float64Var(&cfg.Scale, "scale", cfg.Scale, "The scale of the cat on the screen.")
+	flag.BoolVar(&cfg.Quiet, "quiet", cfg.Quiet, "Disable sound.")
+	flag.BoolVar(&cfg.MousePassthrough, "mousepassthrough", cfg.MousePassthrough, "Enable mouse passthrough.")
+	flag.Parse()
 
 	sprites, sounds, err := loadAssets(f, sampleRate)
 	if err != nil {

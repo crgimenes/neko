@@ -1,0 +1,8 @@
+;;; Neko configuration - Filo format
+;;; Copy this file to ~/.config/neko/init.filo or ./neko_init.filo
+
+(do
+  (set Speed 2.0)             ;; movement speed of the cat
+  (set Scale 2.0)             ;; on-screen scale of the cat
+  (set Quiet #f)              ;; #t disables sound
+  (set MousePassthrough #f))  ;; #t lets clicks pass through the window

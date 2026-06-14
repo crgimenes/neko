@@ -27,12 +27,41 @@ Or you can build the binary and run it:
 export CGO_ENABLED=1
 go build -o neko main.go
 ```
-Parameters
+## Configuration
 
-- `-mousepassthrough` Enable mouse passthrough (default false).
-- `-quiet` Disable sound.
+Neko is configured with a [Filo](https://github.com/crgimenes/filo) script. On
+startup it looks for the config file in this order:
+
+1. `./neko_init.filo` in the current directory.
+2. `$XDG_CONFIG_HOME/neko/init.filo` (defaults to `~/.config/neko/init.filo`).
+
+If no file is found, the built-in defaults are used. Any setting omitted from the
+file keeps its default. See [`neko_init-sample.filo`](neko_init-sample.filo) for a
+starting point:
+
+```lisp
+(do
+  (set Speed 2.0)             ;; movement speed of the cat
+  (set Scale 2.0)             ;; on-screen scale of the cat
+  (set Quiet #f)              ;; #t disables sound
+  (set MousePassthrough #f))  ;; #t lets clicks pass through the window
+```
+
+Settings:
+
+- `Speed` The speed of the cat (default 2.0).
+- `Scale` The scale of the cat on the screen (default 2.0).
+- `Quiet` Disable sound (default `#f`).
+- `MousePassthrough` Enable mouse passthrough (default `#f`).
+
+### Command-line flags
+
+Flags override the config file (precedence: defaults < config file < flags):
+
+- `-speed` The speed of the cat (default 2.0).
 - `-scale` The scale of the cat on the screen (default 2.0).
-- `-speed` The speed of the cat (default 2).
+- `-quiet` Disable sound.
+- `-mousepassthrough` Enable mouse passthrough.
 - `-h` Show help.
 
 ## How to install
