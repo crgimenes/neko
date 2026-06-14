@@ -1,6 +1,74 @@
 package main
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
+
+func TestMovementVector(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		x         float64
+		y         float64
+		speed     float64
+		wantDX    float64
+		wantDY    float64
+		wantSpeed float64
+	}{
+		{
+			name:      "horizontal",
+			x:         10,
+			speed:     2,
+			wantDX:    2,
+			wantSpeed: 2,
+		},
+		{
+			name:      "vertical",
+			y:         -10,
+			speed:     2,
+			wantDY:    -2,
+			wantSpeed: 2,
+		},
+		{
+			name:      "diagonal",
+			x:         3,
+			y:         4,
+			speed:     2,
+			wantDX:    1.2,
+			wantDY:    1.6,
+			wantSpeed: 2,
+		},
+		{
+			name:  "zero distance",
+			speed: 2,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			dx, dy := movementVector(test.x, test.y, test.speed)
+			if !almostEqual(dx, test.wantDX) {
+				t.Errorf("dx = %v, want %v", dx, test.wantDX)
+			}
+			if !almostEqual(dy, test.wantDY) {
+				t.Errorf("dy = %v, want %v", dy, test.wantDY)
+			}
+			if got := math.Hypot(dx, dy); !almostEqual(got, test.wantSpeed) {
+				t.Errorf("speed = %v, want %v", got, test.wantSpeed)
+			}
+		})
+	}
+}
+
+func almostEqual(a, b float64) bool {
+	const tolerance = 1e-12
+
+	return math.Abs(a-b) <= tolerance
+}
 
 func TestSpriteDirectionWithoutHistory(t *testing.T) {
 	t.Parallel()

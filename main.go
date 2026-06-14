@@ -29,7 +29,6 @@ type neko struct {
 	waiting    bool
 	x          float64
 	y          float64
-	distance   int
 	count      int
 	min        int
 	max        int
@@ -103,16 +102,19 @@ func (m *neko) playSound(soundName string) {
 	m.currentPlayer.Play()
 }
 
-func absInt(v int) int {
-	if v < 0 {
-		return -v
-	}
-	return v
-}
-
 func angularDistance(a, b float64) float64 {
 	distance := math.Abs(a - b)
 	return min(distance, 360-distance)
+}
+
+func movementVector(x, y, speed float64) (float64, float64) {
+	distance := math.Hypot(x, y)
+	if distance == 0 {
+		return 0, 0
+	}
+
+	scale := speed / distance
+	return x * scale, y * scale
 }
 
 func parseMovementDirection(sprite string) (movementDirection, bool) {
@@ -191,12 +193,12 @@ func (m *neko) Update() error {
 	m.y = max(0, min(m.y, maxY))
 	ebiten.SetWindowPosition(int(math.Round(m.x)), int(math.Round(m.y)))
 
-	mx, my := ebiten.CursorPosition()
+	mx, my := ebiten.CursorPositionF()
 	x := mx - (width / 2)
 	y := my - (height / 2)
 
-	m.distance = absInt(x) + absInt(y)
-	if m.distance < width || m.waiting {
+	distance := math.Abs(x) + math.Abs(y)
+	if distance < width || m.waiting {
 		m.stayIdle()
 		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 			m.waiting = !m.waiting
@@ -236,38 +238,19 @@ func (m *neko) stayIdle() {
 	}
 }
 
-func (m *neko) catchCursor(x, y int) {
+func (m *neko) catchCursor(x, y float64) {
 	m.state = 0
 	m.min = 8
 	m.max = 16
 
 	// get mouse direction
-	r := math.Atan2(float64(y), float64(x))
+	r := math.Atan2(y, x)
 	a := math.Mod((r/math.Pi*180)+360, 360) // Normazing angle to [0, 360)
 	m.sprite = spriteDirection(a, m.sprite)
 
-	switch {
-	case a <= 292.5 && a > 247.5: // up
-		m.y -= m.cfg.Speed
-	case a <= 337.5 && a > 292.5: // up right
-		m.x += m.cfg.Speed / math.Sqrt2
-		m.y -= m.cfg.Speed / math.Sqrt2
-	case a <= 22.5 || a > 337.5: // right
-		m.x += m.cfg.Speed
-	case a <= 67.5 && a > 22.5: // down right
-		m.x += m.cfg.Speed / math.Sqrt2
-		m.y += m.cfg.Speed / math.Sqrt2
-	case a <= 112.5 && a > 67.5: // down
-		m.y += m.cfg.Speed
-	case a <= 157.5 && a > 112.5: // down left
-		m.x -= m.cfg.Speed / math.Sqrt2
-		m.y += m.cfg.Speed / math.Sqrt2
-	case a <= 202.5 && a > 157.5: // left
-		m.x -= m.cfg.Speed
-	case a <= 247.5 && a > 202.5: // up left
-		m.x -= m.cfg.Speed / math.Sqrt2
-		m.y -= m.cfg.Speed / math.Sqrt2
-	}
+	dx, dy := movementVector(x, y, m.cfg.Speed)
+	m.x += dx
+	m.y += dy
 }
 
 func (m *neko) Draw(screen *ebiten.Image) {
