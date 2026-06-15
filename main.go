@@ -73,6 +73,9 @@ const (
 	soundVolume          = 0.3
 	directionSectorAngle = 45.0
 	directionHalfSector  = directionSectorAngle / 2
+	arrivalSlowdownRange = width * 3
+	// Disabled by default: a cat should keep its speed while pouncing.
+	arrivalSlowdownEnabled = false
 	// A small overlap keeps the animation stable without changing movement.
 	directionHysteresis = 3.0
 )
@@ -108,11 +111,16 @@ func angularDistance(a, b float64) float64 {
 	return min(distance, 360-distance)
 }
 
-func movementVector(x, y, speed float64) (float64, float64) {
+func movementVector(x, y, speed float64, slowdown bool) (float64, float64) {
 	distance := math.Hypot(x, y)
-	if distance == 0 {
+	if distance == 0 || speed <= 0 {
 		return 0, 0
 	}
+
+	if slowdown && distance < arrivalSlowdownRange {
+		speed *= distance / arrivalSlowdownRange
+	}
+	speed = min(speed, distance)
 
 	scale := speed / distance
 	return x * scale, y * scale
@@ -264,7 +272,7 @@ func (m *neko) catchCursor(x, y float64) {
 	a := math.Mod((r/math.Pi*180)+360, 360) // Normazing angle to [0, 360)
 	m.sprite = spriteDirection(a, m.sprite)
 
-	dx, dy := movementVector(x, y, m.cfg.Speed)
+	dx, dy := movementVector(x, y, m.cfg.Speed, arrivalSlowdownEnabled)
 	m.x += dx
 	m.y += dy
 }

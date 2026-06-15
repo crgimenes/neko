@@ -15,36 +15,64 @@ func TestMovementVector(t *testing.T) {
 		x         float64
 		y         float64
 		speed     float64
+		slowdown  bool
 		wantDX    float64
 		wantDY    float64
 		wantSpeed float64
 	}{
 		{
 			name:      "horizontal",
-			x:         10,
+			x:         100,
 			speed:     2,
 			wantDX:    2,
 			wantSpeed: 2,
 		},
 		{
 			name:      "vertical",
-			y:         -10,
+			y:         -100,
 			speed:     2,
 			wantDY:    -2,
 			wantSpeed: 2,
 		},
 		{
 			name:      "diagonal",
-			x:         3,
-			y:         4,
+			x:         60,
+			y:         80,
 			speed:     2,
 			wantDX:    1.2,
 			wantDY:    1.6,
 			wantSpeed: 2,
 		},
 		{
+			name:      "slow arrival",
+			x:         48,
+			speed:     2,
+			slowdown:  true,
+			wantDX:    1,
+			wantSpeed: 1,
+		},
+		{
+			name:      "slow arrival disabled",
+			x:         48,
+			speed:     2,
+			wantDX:    2,
+			wantSpeed: 2,
+		},
+		{
+			name:      "limit final step",
+			x:         0.5,
+			speed:     200,
+			wantDX:    0.5,
+			wantSpeed: 0.5,
+		},
+		{
 			name:  "zero distance",
 			speed: 2,
+		},
+		{
+			name:  "non-positive speed",
+			x:     100,
+			speed: -1,
 		},
 	}
 
@@ -52,7 +80,7 @@ func TestMovementVector(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 
-			dx, dy := movementVector(test.x, test.y, test.speed)
+			dx, dy := movementVector(test.x, test.y, test.speed, test.slowdown)
 			if !almostEqual(dx, test.wantDX) {
 				t.Errorf("dx = %v, want %v", dx, test.wantDX)
 			}
