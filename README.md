@@ -44,7 +44,8 @@ starting point:
   (set Speed 2.0)             ;; movement speed of the cat
   (set Scale 2.0)             ;; on-screen scale of the cat
   (set Quiet #f)              ;; #t disables sound
-  (set MousePassthrough #f))  ;; #t lets clicks pass through the window
+  (set MousePassthrough #f)   ;; #t lets clicks pass through the window
+  (set SpriteSheet ""))       ;; path to a custom sprite sheet; empty uses the built-in cat
 ```
 
 Settings:
@@ -53,6 +54,7 @@ Settings:
 - `Scale` The scale of the cat on the screen (default 2.0).
 - `Quiet` Disable sound (default `#f`).
 - `MousePassthrough` Enable mouse passthrough (default `#f`).
+- `SpriteSheet` Path to a custom sprite sheet (default empty; see [Sprite sheets and skins](#sprite-sheets-and-skins)).
 
 ### Command-line flags
 
@@ -62,7 +64,24 @@ Flags override the config file (precedence: defaults < config file < flags):
 - `-scale` The scale of the cat on the screen (default 2.0).
 - `-quiet` Disable sound.
 - `-mousepassthrough` Enable mouse passthrough.
+- `-spritesheet` Path to a custom oneko-layout sprite sheet (PNG).
 - `-h` Show help.
+
+## Sprite sheets and skins
+
+Neko draws its frames from a single sprite sheet: an 8x4 grid of 32x32 tiles
+(256x128). The tile layout follows [adryd325/oneko.js](https://github.com/adryd325/oneko.js),
+so sprite sheets from the oneko ecosystem can be loaded as skins.
+
+Pass your own sheet with `-spritesheet path/to/sheet.png` (or the `SpriteSheet`
+config setting). When no sheet is given, the built-in cat is used.
+
+The built-in sheet (`assets/neko.png`) is generated from the individual sprite
+files in `assets/`. To regenerate it after editing those sprites:
+
+```bash
+GENSHEET=1 go test -run TestGenerateSpriteSheet
+```
 
 ## How to install
 

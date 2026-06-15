@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	_ "image/gif"
 	_ "image/png"
 	"io"
 	"io/fs"
@@ -50,6 +51,7 @@ type Config struct {
 	Scale            float64
 	Quiet            bool
 	MousePassthrough bool
+	SpriteSheet      string
 }
 
 type movementDirection int
@@ -92,6 +94,57 @@ const (
 	stateYawn       = 10
 	stateSleep      = 13
 )
+
+// spriteCell is the column and row of a 32px tile inside a sprite sheet.
+type spriteCell struct {
+	col int
+	row int
+}
+
+// The sprite sheet is an 8x4 grid of 32px tiles (256x128), following the
+// layout used by adryd325/oneko.js (https://github.com/adryd325/oneko.js).
+// Sharing that layout lets third-party oneko sheets be loaded as skins.
+const (
+	sheetColumns = 8
+	sheetRows    = 4
+)
+
+// spriteSheetLayout maps each frame Neko draws to its cell in the sheet. The
+// eight movement directions and the sleeping frames sit on their canonical
+// oneko cells so foreign oneko sheets animate correctly; the remaining idle
+// frames reuse the nearest oneko state, since Neko has a few states oneko does
+// not. Cells absent from this map are unused and may be left transparent.
+var spriteSheetLayout = map[string]spriteCell{
+	// Movement directions, two frames each (oneko N, NE, E, SE, S, SW, W, NW).
+	"up1":        {1, 2},
+	"up2":        {1, 3},
+	"upright1":   {0, 2},
+	"upright2":   {0, 3},
+	"right1":     {3, 0},
+	"right2":     {3, 1},
+	"downright1": {5, 1},
+	"downright2": {5, 2},
+	"down1":      {6, 3},
+	"down2":      {7, 2},
+	"downleft1":  {5, 3},
+	"downleft2":  {6, 1},
+	"left1":      {4, 2},
+	"left2":      {4, 3},
+	"upleft1":    {1, 0},
+	"upleft2":    {1, 1},
+
+	// Idle states.
+	"awake":    {7, 3}, // oneko "alert"
+	"sleep1":   {2, 0}, // oneko "sleeping"
+	"sleep2":   {2, 1},
+	"yawn1":    {3, 2}, // oneko "tired"
+	"yawn2":    {3, 3}, // oneko "idle" (oneko has no second tired frame)
+	"scratch1": {5, 0}, // oneko "scratchSelf"
+	"scratch2": {6, 0},
+	"wash":     {7, 0}, // oneko "scratchSelf" (third frame); single frame, since
+	//                     oneko grooming is the closest match to washing and
+	//                     only three scratchSelf cells exist.
+}
 
 var (
 	//go:embed assets/*
@@ -292,7 +345,7 @@ func (m *neko) catchCursor(x, y float64) {
 func (m *neko) Draw(screen *ebiten.Image) {
 	var sprite string
 	switch {
-	case m.sprite == "awake":
+	case m.sprite == "awake" || m.sprite == "wash":
 		sprite = m.sprite
 	case m.count < m.min:
 		sprite = m.sprite + "1"
@@ -325,49 +378,93 @@ func (m *neko) Draw(screen *ebiten.Image) {
 	screen.DrawImage(m.img, nil)
 }
 
-func loadAssets(assetsFS fs.FS, sampleRate int) (map[string]*ebiten.Image, map[string][]byte, error) {
-	sprites := make(map[string]*ebiten.Image)
+// subImager is implemented by the standard library image types that back a
+// decoded PNG, allowing zero-copy crops of a sprite sheet.
+type subImager interface {
+	SubImage(r image.Rectangle) image.Image
+}
+
+// loadSpriteSheet returns the raw PNG bytes of the sprite sheet to use: the
+// user-provided file when sheetPath is set, otherwise the embedded default.
+func loadSpriteSheet(sheetPath string) ([]byte, error) {
+	if sheetPath != "" {
+		data, err := os.ReadFile(filepath.Clean(sheetPath))
+		if err != nil {
+			return nil, fmt.Errorf("read sprite sheet %q: %w", sheetPath, err)
+		}
+		return data, nil
+	}
+	return embeddedFS.ReadFile("assets/neko.png")
+}
+
+// loadSprites decodes an oneko-layout sprite sheet and slices it into the
+// individual frames Neko draws. The crops share the decoded sheet's pixels, so
+// slicing is effectively free at load time.
+func loadSprites(sheet []byte) (map[string]*ebiten.Image, error) {
+	img, _, err := image.Decode(bytes.NewReader(sheet))
+	if err != nil {
+		return nil, fmt.Errorf("decode sprite sheet: %w", err)
+	}
+
+	cropper, ok := img.(subImager)
+	if !ok {
+		return nil, fmt.Errorf("sprite sheet type %T does not support cropping", img)
+	}
+
+	bounds := img.Bounds()
+	if bounds.Dx() < sheetColumns*width || bounds.Dy() < sheetRows*height {
+		return nil, fmt.Errorf(
+			"sprite sheet is %dx%d, need at least %dx%d",
+			bounds.Dx(), bounds.Dy(), sheetColumns*width, sheetRows*height,
+		)
+	}
+
+	sprites := make(map[string]*ebiten.Image, len(spriteSheetLayout))
+	for name, cell := range spriteSheetLayout {
+		x0 := bounds.Min.X + cell.col*width
+		y0 := bounds.Min.Y + cell.row*height
+		rect := image.Rect(x0, y0, x0+width, y0+height)
+		sprites[name] = ebiten.NewImageFromImage(cropper.SubImage(rect))
+	}
+
+	return sprites, nil
+}
+
+// loadSounds decodes the embedded .wav assets into raw PCM byte slices keyed by
+// file name without extension.
+func loadSounds(assetsFS fs.FS, sampleRate int) (map[string][]byte, error) {
 	sounds := make(map[string][]byte)
 
 	entries, err := fs.ReadDir(assetsFS, "assets")
 	if err != nil {
-		return nil, nil, fmt.Errorf("read assets directory: %w", err)
+		return nil, fmt.Errorf("read assets directory: %w", err)
 	}
 
 	for _, entry := range entries {
-		if entry.IsDir() {
+		if entry.IsDir() || path.Ext(entry.Name()) != ".wav" {
 			continue
 		}
 
 		assetPath := path.Join("assets", entry.Name())
 		data, err := fs.ReadFile(assetsFS, assetPath)
 		if err != nil {
-			return nil, nil, fmt.Errorf("read %q: %w", assetPath, err)
+			return nil, fmt.Errorf("read %q: %w", assetPath, err)
+		}
+
+		stream, err := wav.DecodeWithSampleRate(sampleRate, bytes.NewReader(data))
+		if err != nil {
+			return nil, fmt.Errorf("decode sound %q: %w", entry.Name(), err)
+		}
+		soundData, err := io.ReadAll(stream)
+		if err != nil {
+			return nil, fmt.Errorf("read sound %q: %w", entry.Name(), err)
 		}
 
 		name := strings.TrimSuffix(entry.Name(), path.Ext(entry.Name()))
-		switch path.Ext(entry.Name()) {
-		case ".png":
-			img, _, err := image.Decode(bytes.NewReader(data))
-			if err != nil {
-				return nil, nil, fmt.Errorf("decode sprite %q: %w", entry.Name(), err)
-			}
-			sprites[name] = ebiten.NewImageFromImage(img)
-
-		case ".wav":
-			stream, err := wav.DecodeWithSampleRate(sampleRate, bytes.NewReader(data))
-			if err != nil {
-				return nil, nil, fmt.Errorf("decode sound %q: %w", entry.Name(), err)
-			}
-			soundData, err := io.ReadAll(stream)
-			if err != nil {
-				return nil, nil, fmt.Errorf("read sound %q: %w", entry.Name(), err)
-			}
-			sounds[name] = soundData
-		}
+		sounds[name] = soundData
 	}
 
-	return sprites, sounds, nil
+	return sounds, nil
 }
 
 // configPath returns the path to the Filo config file. A local "neko_init.filo"
@@ -404,6 +501,7 @@ func loadConfig() *Config {
 		Scale:            2.0,
 		Quiet:            false,
 		MousePassthrough: false,
+		SpriteSheet:      "",
 	}
 
 	name := configPath()
@@ -418,6 +516,7 @@ func loadConfig() *Config {
 	f.SetGlobal("Scale", cfg.Scale)
 	f.SetGlobal("Quiet", cfg.Quiet)
 	f.SetGlobal("MousePassthrough", cfg.MousePassthrough)
+	f.SetGlobal("SpriteSheet", cfg.SpriteSheet)
 
 	b, err := os.ReadFile(filepath.Clean(name))
 	if err != nil {
@@ -431,6 +530,7 @@ func loadConfig() *Config {
 	cfg.Scale = f.MustGetNumber("Scale")
 	cfg.Quiet = f.MustGetBool("Quiet")
 	cfg.MousePassthrough = f.MustGetBool("MousePassthrough")
+	cfg.SpriteSheet = f.MustGetString("SpriteSheet")
 
 	return cfg
 }
@@ -444,9 +544,18 @@ func main() {
 	flag.Float64Var(&cfg.Scale, "scale", cfg.Scale, "The scale of the cat on the screen.")
 	flag.BoolVar(&cfg.Quiet, "quiet", cfg.Quiet, "Disable sound.")
 	flag.BoolVar(&cfg.MousePassthrough, "mousepassthrough", cfg.MousePassthrough, "Enable mouse passthrough.")
+	flag.StringVar(&cfg.SpriteSheet, "spritesheet", cfg.SpriteSheet, "Path to a custom oneko-layout sprite sheet (PNG).")
 	flag.Parse()
 
-	sprites, sounds, err := loadAssets(embeddedFS, sampleRate)
+	sheet, err := loadSpriteSheet(cfg.SpriteSheet)
+	if err != nil {
+		log.Fatal(err)
+	}
+	sprites, err := loadSprites(sheet)
+	if err != nil {
+		log.Fatal(err)
+	}
+	sounds, err := loadSounds(embeddedFS, sampleRate)
 	if err != nil {
 		log.Fatal(err)
 	}
