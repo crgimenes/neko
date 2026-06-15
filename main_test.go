@@ -3,6 +3,8 @@ package main
 import (
 	"math"
 	"testing"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 func TestMovementVector(t *testing.T) {
@@ -68,6 +70,44 @@ func almostEqual(a, b float64) bool {
 	const tolerance = 1e-12
 
 	return math.Abs(a-b) <= tolerance
+}
+
+func TestSyncMonitor(t *testing.T) {
+	t.Parallel()
+
+	first := new(ebiten.MonitorType)
+	second := new(ebiten.MonitorType)
+	n := &neko{x: 100, y: 200}
+
+	windowPositionCalls := 0
+	windowPosition := func() (int, int) {
+		windowPositionCalls++
+		return 20, 30
+	}
+
+	n.syncMonitor(first, windowPosition)
+	if n.monitor != first {
+		t.Fatal("initial monitor was not recorded")
+	}
+	if n.x != 100 || n.y != 200 {
+		t.Fatalf("initial position = (%v, %v), want (100, 200)", n.x, n.y)
+	}
+
+	n.syncMonitor(first, windowPosition)
+	if windowPositionCalls != 0 {
+		t.Fatalf("WindowPosition called %d times without a monitor change", windowPositionCalls)
+	}
+
+	n.syncMonitor(second, windowPosition)
+	if n.monitor != second {
+		t.Fatal("new monitor was not recorded")
+	}
+	if n.x != 20 || n.y != 30 {
+		t.Fatalf("rebased position = (%v, %v), want (20, 30)", n.x, n.y)
+	}
+	if windowPositionCalls != 1 {
+		t.Fatalf("WindowPosition called %d times, want 1", windowPositionCalls)
+	}
 }
 
 func TestSpriteDirectionWithoutHistory(t *testing.T) {

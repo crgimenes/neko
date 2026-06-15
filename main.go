@@ -36,6 +36,7 @@ type neko struct {
 	sprite     string
 	lastSprite string
 	img        *ebiten.Image
+	monitor    *ebiten.MonitorType
 
 	cfg           *Config
 	sprites       map[string]*ebiten.Image
@@ -176,21 +177,36 @@ func spriteDirection(angle float64, previous string) string {
 	return movementDirection(index).sprite()
 }
 
+func (m *neko) syncMonitor(
+	current *ebiten.MonitorType,
+	windowPosition func() (int, int),
+) {
+	if current == nil {
+		return
+	}
+	if m.monitor == nil {
+		m.monitor = current
+		return
+	}
+	if current == m.monitor {
+		return
+	}
+
+	x, y := windowPosition()
+	m.x = float64(x)
+	m.y = float64(y)
+	m.monitor = current
+}
+
 func (m *neko) Update() error {
 	m.count++
 	if m.state == 10 && m.count == m.min {
 		m.playSound("idle3")
 	}
 
-	// Prevents neko from being stuck on the side of the screen
-	// or randomly travelling to another monitor
-	monitorWidth, monitorHeight := ebiten.Monitor().Size()
-	windowWidth, windowHeight := ebiten.WindowSize()
-	maxX := float64(max(0, monitorWidth-windowWidth))
-	maxY := float64(max(0, monitorHeight-windowHeight))
-
-	m.x = max(0, min(m.x, maxX))
-	m.y = max(0, min(m.y, maxY))
+	// Window coordinates are relative to the current monitor. Rebase the
+	// internal position when the window crosses into another monitor.
+	m.syncMonitor(ebiten.Monitor(), ebiten.WindowPosition)
 	ebiten.SetWindowPosition(int(math.Round(m.x)), int(math.Round(m.y)))
 
 	mx, my := ebiten.CursorPositionF()
