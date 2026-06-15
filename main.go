@@ -80,9 +80,22 @@ const (
 	directionHysteresis = 3.0
 )
 
+// Idle animation timeline. While the cat is idle, m.state advances through
+// these phases on each animation cycle; a phase spans every tick from its
+// threshold up to the next one. stateMoving means the cat is chasing the
+// cursor rather than idling.
+const (
+	stateMoving     = 0
+	stateAwakeStart = 1
+	stateScratch    = 4
+	stateWash       = 7
+	stateYawn       = 10
+	stateSleep      = 13
+)
+
 var (
 	//go:embed assets/*
-	f embed.FS
+	embeddedFS embed.FS
 )
 
 func (m *neko) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -208,7 +221,7 @@ func (m *neko) syncMonitor(
 
 func (m *neko) Update() error {
 	m.count++
-	if m.state == 10 && m.count == m.min {
+	if m.state == stateYawn && m.count == m.min {
 		m.playSound("idle3")
 	}
 
@@ -230,7 +243,7 @@ func (m *neko) Update() error {
 		return nil
 	}
 
-	if m.state >= 13 {
+	if m.state >= stateSleep {
 		m.playSound("awake")
 	}
 	m.catchCursor(x, y)
@@ -238,21 +251,20 @@ func (m *neko) Update() error {
 }
 
 func (m *neko) stayIdle() {
-	// idle state
-	switch m.state {
-	case 0, 1, 2, 3:
-		if m.state == 0 {
-			m.state = 1
+	switch {
+	case m.state < stateScratch:
+		if m.state == stateMoving {
+			m.state = stateAwakeStart
 		}
 		m.sprite = "awake"
 
-	case 4, 5, 6:
+	case m.state < stateWash:
 		m.sprite = "scratch"
 
-	case 7, 8, 9:
+	case m.state < stateYawn:
 		m.sprite = "wash"
 
-	case 10, 11, 12:
+	case m.state < stateSleep:
 		m.min = 32
 		m.max = 64
 		m.sprite = "yawn"
@@ -293,10 +305,10 @@ func (m *neko) Draw(screen *ebiten.Image) {
 	if m.count > m.max {
 		m.count = 0
 
-		if m.state > 0 {
+		if m.state > stateMoving {
 			m.state++
 			switch m.state {
-			case 13:
+			case stateSleep:
 				m.playSound("sleep")
 			}
 		}
@@ -434,7 +446,7 @@ func main() {
 	flag.BoolVar(&cfg.MousePassthrough, "mousepassthrough", cfg.MousePassthrough, "Enable mouse passthrough.")
 	flag.Parse()
 
-	sprites, sounds, err := loadAssets(f, sampleRate)
+	sprites, sounds, err := loadAssets(embeddedFS, sampleRate)
 	if err != nil {
 		log.Fatal(err)
 	}
