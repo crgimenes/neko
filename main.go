@@ -147,7 +147,11 @@ var spriteSheetLayout = map[string]spriteCell{
 }
 
 var (
-	//go:embed assets/*
+	// Only the generated sprite sheet and the sounds ship in the binary. The
+	// individual source sprites under sprites/ are build-time inputs for the
+	// generator (see gensheet_test.go), not runtime assets.
+	//go:embed assets/neko.png
+	//go:embed assets/*.wav
 	embeddedFS embed.FS
 )
 

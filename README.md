@@ -77,7 +77,7 @@ Pass your own sheet with `-spritesheet path/to/sheet.png` (or the `SpriteSheet`
 config setting). When no sheet is given, the built-in cat is used.
 
 The built-in sheet (`assets/neko.png`) is generated from the individual sprite
-files in `assets/`. To regenerate it after editing those sprites:
+files in `sprites/`. To regenerate it after editing those sprites:
 
 ```bash
 GENSHEET=1 go test -run TestGenerateSpriteSheet

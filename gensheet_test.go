@@ -29,7 +29,7 @@ func TestGenerateSpriteSheet(t *testing.T) {
 		if name == "wash" {
 			file = "wash1.png"
 		}
-		src := filepath.Join("assets", file)
+		src := filepath.Join("sprites", file)
 		f, err := os.Open(src)
 		if err != nil {
 			t.Fatalf("open %s: %v", src, err)
