@@ -12,16 +12,77 @@ The goal is to demonstrate the Go language with a fun and very nostalgic example
 
 In this example, we used the [Ebitengine](https://ebitengine.org), an incredibly easy-to-use gaming library with a vibrant community.
 
-## How to run
+## Download (no Go required)
 
-Note that some operating systems may restrict the execution of binaries downloaded from the internet for security reasons. Please consult your operating system documentation to learn how to enable Neko to run.
+If you just want to use Neko, download a prebuilt binary from the
+[latest release](https://github.com/crgimenes/neko/releases/latest). You do
+**not** need Go or any developer tools.
+
+Pick the file for your system:
+
+| System | File to download |
+| --- | --- |
+| macOS (Intel or Apple Silicon) | `neko-darwin-universal.zip` |
+| Windows (64-bit, most common) | `neko-windows-amd64.exe` |
+| Windows (older 32-bit) | `neko-windows-386.exe` |
+| Windows (ARM) | `neko-windows-arm64.exe` |
+| Linux (Intel/AMD 64-bit) | `neko-linux-amd64.gz` |
+| Linux (ARM 64-bit) | `neko-linux-arm64.gz` |
+
+### macOS
+
+1. Download `neko-darwin-universal.zip` and double-click it to unzip. You will get `neko.app`.
+2. Move `neko.app` to your **Applications** folder (recommended).
+3. Double-click `neko.app` to run it.
+
+The app is signed and notarized by Apple, so it should open normally. The single
+"universal" build works on both Intel and Apple Silicon Macs, so there is no need
+to choose an architecture.
+
+If macOS shows **"neko.app is damaged and can't be opened"** or warns about an
+unidentified developer:
+
+- Make sure the download finished completely, and unzip the file before opening
+  it (do not run the app from inside the `.zip`). Re-download if in doubt.
+- Right-click (or Control-click) `neko.app`, choose **Open**, then confirm with
+  **Open** in the dialog.
+- If it still will not open, open the **Terminal** app and run (adjust the path
+  if you did not move it to Applications):
+
+  ```bash
+  xattr -dr com.apple.quarantine /Applications/neko.app
+  ```
+
+- Check **System Settings → Privacy & Security → Security** and make sure
+  "Allow applications downloaded from" is set to **App Store & Known Developers**,
+  not App Store only.
+
+### Windows
+
+Download the `.exe` for your system and double-click it. Windows SmartScreen may
+warn you because the app is not from the Microsoft Store: click
+**More info → Run anyway** to start it.
+
+### Linux
+
+Download the matching `.gz`, then decompress and run it:
+
+```bash
+gunzip neko-linux-amd64.gz
+chmod +x neko-linux-amd64
+./neko-linux-amd64
+```
+
+## Run from source
+
+If you have Go installed and want to run Neko from source:
 
 ```bash
 export CGO_ENABLED=1
 go run main.go
 ```
 
-Or you can build the binary and run it:
+Or build the binary and run it:
 
 ```bash
 export CGO_ENABLED=1
