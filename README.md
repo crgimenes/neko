@@ -78,16 +78,22 @@ chmod +x neko-linux-amd64
 If you have Go installed and want to run Neko from source:
 
 ```bash
-export CGO_ENABLED=1
 go run main.go
 ```
 
 Or build the binary and run it:
 
 ```bash
-export CGO_ENABLED=1
 go build -o neko main.go
 ```
+
+On macOS and Windows no extra dependencies are needed. On **Linux**, Ebitengine
+requires Cgo and the system development libraries, so build with
+`CGO_ENABLED=1` after installing the packages listed in the
+[Ebitengine install guide](https://ebitengine.org/en/documents/install.html)
+(for example, on Debian/Ubuntu: `libgl1-mesa-dev`, `libasound2-dev`,
+`libxcursor-dev`, `libxi-dev`, `libxinerama-dev`, `libxrandr-dev`,
+`libxxf86vm-dev`, and `pkg-config`).
 ## Configuration
 
 Neko is configured with a [Filo](https://github.com/crgimenes/filo) script. On
