@@ -1,4 +1,4 @@
-module neko
+module github.com/crgimenes/neko
 
 go 1.26
 
