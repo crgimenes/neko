@@ -3,10 +3,10 @@ name: Go
 on:
   push:
     branches:
-      - master
+      - trunk
   pull_request:
     branches:
-      - master
+      - trunk
   workflow_dispatch:
 
 permissions:
