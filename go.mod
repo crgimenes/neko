@@ -3,8 +3,8 @@ module github.com/crgimenes/neko
 go 1.27.1
 
 require (
-	github.com/crgimenes/filo v0.0.21
-	github.com/hajimehoshi/ebiten/v2 v2.10.2
+	github.com/crgimenes/filo v0.0.23
+	github.com/hajimehoshi/ebiten/v2 v2.10.3
 )
 
 require (
