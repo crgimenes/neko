@@ -1,9 +1,9 @@
 module github.com/crgimenes/neko
 
-go 1.27.1
+go 1.27.4
 
 require (
-	github.com/crgimenes/filo v0.1.2
+	github.com/crgimenes/filo v0.1.3
 	github.com/hajimehoshi/ebiten/v2 v2.10.6
 )
 
