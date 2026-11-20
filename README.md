@@ -77,13 +77,13 @@ chmod +x neko-linux-amd64
 If you have Go installed and want to run Neko from source:
 
 ```bash
-go run main.go
+go run ./cmd/neko
 ```
 
 Or build the binary and run it:
 
 ```bash
-go build -o neko main.go
+go build -o neko ./cmd/neko
 ```
 
 On macOS and Windows no extra dependencies are needed. On **Linux**, Ebitengine
@@ -142,7 +142,7 @@ so sprite sheets from the oneko ecosystem can be loaded as skins.
 Pass your own sheet with `-spritesheet path/to/sheet.png` (or the `SpriteSheet`
 config setting). When no sheet is given, the built-in cat is used.
 
-The built-in sheet (`assets/neko.png`) is generated from the individual sprite
+The built-in sheet (`cmd/neko/assets/neko.png`) is generated from the individual sprite
 files in `sprites/`. To regenerate it after editing those sprites:
 
 ```bash
@@ -158,7 +158,7 @@ Install dependencies, build, and install the project into your Go bin directory:
 ```bash
 cd neko
 go mod tidy
-go install
+go install ./cmd/neko
 ```
 
 To use Neko globally across your system, check if your Go bin directory is in your `$PATH` by running:
